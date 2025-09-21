@@ -8,13 +8,13 @@ const ThemeToggle = () => {
   return (
     <motion.button
       onClick={toggleTheme}
-      className={`
+        className={`
         relative w-12 h-6 rounded-full transition-all duration-300 ease-in-out
         ${isDark 
           ? 'bg-gradient-to-r from-[#51A3F0] to-[#99CBF7]' 
           : 'bg-gray-300'
         }
-        focus:outline-none focus:ring-2 focus:ring-[#51A3F0]/50 focus:ring-offset-2 focus:ring-offset-gray-900
+        focus:outline-none focus:ring-2 focus:ring-[#51A3F0]/50 focus:ring-offset-2 focus:ring-offset-gray-900 dark:focus:ring-offset-gray-900 light:focus:ring-offset-white
       `}
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}

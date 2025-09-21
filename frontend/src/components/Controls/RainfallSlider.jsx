@@ -18,7 +18,7 @@ const RainfallSlider = ({ min = 0, max = 20, step = 0.1 }) => {
       transition={{ delay: 0.6 }}
       className="relative"
     >
-      <label className="block text-sm font-medium text-gray-300 mb-4 flex items-center">
+      <label className="block text-sm font-medium text-gray-300 dark:text-gray-300 light:text-gray-700 mb-4 flex items-center">
         <svg className="w-4 h-4 mr-2 text-[#51A3F0]" fill="currentColor" viewBox="0 0 20 20">
           <path d="M10 2L3 7v11a1 1 0 001 1h12a1 1 0 001-1V7l-7-5zM8 15v-3a2 2 0 114 0v3H8z" />
         </svg>
@@ -45,7 +45,7 @@ const RainfallSlider = ({ min = 0, max = 20, step = 0.1 }) => {
           step={step}
           value={value}
           onChange={handleChange}
-          className="w-full h-2 bg-gray-700/50 rounded-lg appearance-none cursor-pointer
+          className="w-full h-2 bg-gray-700/50 dark:bg-gray-700/50 light:bg-gray-300 rounded-lg appearance-none cursor-pointer
                      [&::-webkit-slider-thumb]:appearance-none
                      [&::-webkit-slider-thumb]:h-6
                      [&::-webkit-slider-thumb]:w-6
@@ -79,7 +79,7 @@ const RainfallSlider = ({ min = 0, max = 20, step = 0.1 }) => {
         />
       </div>
 
-      <div className="flex justify-between text-xs text-gray-400 mt-2">
+      <div className="flex justify-between text-xs text-gray-400 dark:text-gray-400 light:text-gray-600 mt-2">
         <span>{min}"</span>
         <span>{max}"</span>
       </div>

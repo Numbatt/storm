@@ -24,7 +24,7 @@ const DurationSlider = ({ min = 0.5, max = 8, step = 0.5 }) => {
       transition={{ delay: 0.8 }}
       className="relative"
     >
-      <label className="block text-sm font-medium text-gray-300 mb-4 flex items-center">
+      <label className="block text-sm font-medium text-gray-300 dark:text-gray-300 light:text-gray-700 mb-4 flex items-center">
         <svg className="w-4 h-4 mr-2 text-[#74B5F2]" fill="currentColor" viewBox="0 0 20 20">
           <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
         </svg>
@@ -51,7 +51,7 @@ const DurationSlider = ({ min = 0.5, max = 8, step = 0.5 }) => {
           step={step}
           value={value}
           onChange={handleChange}
-          className="w-full h-2 bg-gray-700/50 rounded-lg appearance-none cursor-pointer
+          className="w-full h-2 bg-gray-700/50 dark:bg-gray-700/50 light:bg-gray-300 rounded-lg appearance-none cursor-pointer
                      [&::-webkit-slider-thumb]:appearance-none
                      [&::-webkit-slider-thumb]:h-6
                      [&::-webkit-slider-thumb]:w-6
@@ -85,7 +85,7 @@ const DurationSlider = ({ min = 0.5, max = 8, step = 0.5 }) => {
         />
       </div>
 
-      <div className="flex justify-between text-xs text-gray-400 mt-2">
+      <div className="flex justify-between text-xs text-gray-400 dark:text-gray-400 light:text-gray-600 mt-2">
         <span>30min</span>
         <span>8hrs</span>
       </div>

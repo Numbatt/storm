@@ -4,8 +4,6 @@ import { useTheme } from '../../contexts/ThemeContext'
 import { selectResults, selectLoading } from '../../store/slices/simulationSlice'
 import MarkerCluster from './MarkerCluster'
 import 'leaflet/dist/leaflet.css'
-import 'react-leaflet-cluster/dist/assets/MarkerCluster.css'
-import 'react-leaflet-cluster/dist/assets/MarkerCluster.Default.css'
 
 const FloodMap = () => {
   const { isDark } = useTheme()
