@@ -1,7 +1,10 @@
-import { CircleMarker, Popup } from 'react-leaflet'
+import { CircleMarker, Popup, useMap } from 'react-leaflet'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 
 const RiskMarker = ({ marker }) => {
+  const map = useMap()
+  const [currentZoom, setCurrentZoom] = useState(map.getZoom())
   const {
     lat,
     lng,
@@ -12,18 +15,33 @@ const RiskMarker = ({ marker }) => {
     riskDescription
   } = marker
 
-  // Get marker size based on risk level
-  const getMarkerSize = (riskLevel) => {
-    switch (riskLevel) {
-      case 'HIGH':
-        return 12
-      case 'MODERATE':
-        return 8
-      case 'LOW':
-        return 6
-      default:
-        return 8
+  // Update zoom level when map zooms
+  useEffect(() => {
+    const handleZoom = () => {
+      setCurrentZoom(map.getZoom())
     }
+
+    map.on('zoom', handleZoom)
+    return () => {
+      map.off('zoom', handleZoom)
+    }
+  }, [map])
+
+  // Get marker size based on risk level and zoom level
+  const getMarkerSize = (riskLevel, zoom) => {
+    // Base sizes for different risk levels
+    const baseSizes = {
+      'HIGH': 12,
+      'MODERATE': 8,
+      'LOW': 6
+    }
+
+    const baseSize = baseSizes[riskLevel] || 8
+
+    // Scale factor based on zoom level (zoom 10 is baseline)
+    const zoomFactor = Math.max(0.5, Math.min(2, zoom / 10))
+
+    return Math.round(baseSize * zoomFactor)
   }
 
   // Get marker opacity based on risk level
@@ -40,7 +58,7 @@ const RiskMarker = ({ marker }) => {
     }
   }
 
-  const markerSize = getMarkerSize(riskLevel)
+  const markerSize = getMarkerSize(riskLevel, currentZoom)
   const markerOpacity = getMarkerOpacity(riskLevel)
 
   return (

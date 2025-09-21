@@ -24,11 +24,21 @@ const DurationSlider = ({ min = 0.5, max = 8, step = 0.5 }) => {
       transition={{ delay: 0.8 }}
       className="relative"
     >
-      <label className="block text-sm font-medium text-gray-300 mb-4 flex items-center">
-        <svg className="w-4 h-4 mr-2 text-[#74B5F2]" fill="currentColor" viewBox="0 0 20 20">
-          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
-        </svg>
-        Storm Duration
+      <label className="block text-sm font-medium text-gray-300 mb-4 flex items-center justify-between">
+        <div className="flex items-center">
+          <svg className="w-4 h-4 mr-2 text-[#74B5F2]" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+          </svg>
+          Storm Duration
+        </div>
+        <div className="group relative">
+          <svg className="w-4 h-4 text-gray-500 hover:text-gray-300 cursor-help" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+          </svg>
+          <div className="absolute bottom-full right-0 mb-2 hidden group-hover:block w-64 p-2 bg-gray-900 text-white text-xs rounded-lg shadow-lg z-10">
+            Set how long the rainfall event lasts. Longer durations allow more water accumulation. Short bursts (0.5-2 hrs) vs sustained storms (4-8 hrs) have different flood impacts.
+          </div>
+        </div>
       </label>
 
       <div className="mb-4">

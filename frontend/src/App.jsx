@@ -6,6 +6,7 @@ import FloodMap from './components/Map/FloodMap'
 import RainfallSlider from './components/Controls/RainfallSlider'
 import DurationSlider from './components/Controls/DurationSlider'
 import SimulationButton from './components/Controls/SimulationButton'
+import ClearResultsButton from './components/Controls/ClearResultsButton'
 import LandingPage from './components/Hero/LandingPage'
 import ThemeToggle from './components/ThemeToggle'
 
@@ -116,6 +117,7 @@ const AppContent = ({ rainfall, duration, loading, error, results, statistics })
               <RainfallSlider />
               <DurationSlider />
               <SimulationButton />
+              <ClearResultsButton />
             </div>
 
             {/* Current Parameters */}

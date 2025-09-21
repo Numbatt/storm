@@ -53,6 +53,48 @@ app.get('/api/dem-info', (req, res) => {
   }
 });
 
+app.get('/api/elevation', (req, res) => {
+  try {
+    const { lat, lng } = req.query;
+
+    if (!lat || !lng) {
+      return res.status(400).json({
+        error: 'Missing required parameters: lat and lng'
+      });
+    }
+
+    if (!demService) {
+      return res.status(500).json({
+        error: 'DEM service not available'
+      });
+    }
+
+    const latitude = parseFloat(lat);
+    const longitude = parseFloat(lng);
+
+    if (isNaN(latitude) || isNaN(longitude)) {
+      return res.status(400).json({
+        error: 'Invalid latitude or longitude values'
+      });
+    }
+
+    const elevation = demService.getElevationAt(longitude, latitude);
+
+    res.json({
+      elevation: elevation,
+      coordinates: { lat: latitude, lng: longitude },
+      success: elevation !== null
+    });
+
+  } catch (error) {
+    console.error('Error getting elevation:', error);
+    res.status(500).json({
+      error: 'Failed to retrieve elevation data',
+      details: error.message
+    });
+  }
+});
+
 app.post('/api/simulation', async (req, res) => {
   const { rainfall, duration } = req.body;
 
