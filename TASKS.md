@@ -11,48 +11,48 @@
 ## Milestone 1: Project Setup & Environment (Phase 1A)
 
 ### Development Environment
-- [ ] Install Node.js 18+ and verify npm version
-- [ ] Install Python 3.8+ for WhiteboxTools integration
-- [ ] Install GDAL for geospatial data processing
-- [ ] Install WhiteboxTools via pip (`pip install whitebox`)
-- [ ] Set up VS Code with recommended extensions
-- [ ] Create main project directory structure
+- [x] Install Node.js 18+ and verify npm version
+- [x] Install Python 3.8+ for WhiteboxTools integration
+- [x] Install GDAL for geospatial data processing
+- [x] Install WhiteboxTools via pip (`pip install whitebox`)
+- [x] Set up VS Code with recommended extensions
+- [x] Create main project directory structure
 
 ### Project Initialization
-- [ ] Initialize React frontend with Vite (`npm create vite@latest`)
-- [ ] Initialize Express.js backend with npm
-- [ ] Create basic folder structure for frontend/backend/data/docs
-- [ ] Set up Git repository and initial commit
-- [ ] Create .gitignore files for node_modules and environment files
-- [ ] Set up package.json scripts for development workflow
+- [x] Initialize React frontend with Vite (`npm create vite@latest`)
+- [x] Initialize Express.js backend with npm
+- [x] Create basic folder structure for frontend/backend/data/docs
+- [x] Set up Git repository and initial commit
+- [x] Create .gitignore files for node_modules and environment files
+- [x] Set up package.json scripts for development workflow
 
 ### Basic Configuration
-- [ ] Configure Tailwind CSS in React frontend
-- [ ] Set up CORS and basic Express.js middleware
-- [ ] Create environment variable templates (.env.example)
-- [ ] Set up basic API route structure in backend
-- [ ] Configure frontend to proxy API requests to backend
-- [ ] Test basic frontend-backend communication
+- [x] Configure Tailwind CSS in React frontend
+- [x] Set up CORS and basic Express.js middleware
+- [x] Create environment variable templates (.env.example)
+- [x] Set up basic API route structure in backend
+- [x] Configure frontend to proxy API requests to backend
+- [x] Test basic frontend-backend communication
 
 ---
 
 ## Milestone 2: Map Interface Foundation (Phase 1B)
 
 ### Leaflet.js Integration
-- [ ] Install react-leaflet and leaflet dependencies
-- [ ] Create basic FloodMap component with Leaflet integration
-- [ ] Configure OpenStreetMap tile layer as base map
-- [ ] Set up map bounds to focus on Fifth Ward Houston area
-- [ ] Implement basic map controls (zoom, pan)
-- [ ] Test map rendering and responsiveness
+- [x] Install react-leaflet and leaflet dependencies
+- [x] Create basic FloodMap component with Leaflet integration
+- [x] Configure OpenStreetMap tile layer as base map
+- [x] Set up map bounds to focus on Fifth Ward Houston area
+- [x] Implement basic map controls (zoom, pan)
+- [x] Test map rendering and responsiveness
 
 ### UI Components
-- [ ] Create RainfallSlider component (0-20 inches, step 0.1)
-- [ ] Create DurationSlider component (0.5-8 hours, step 0.5)
-- [ ] Create SimulationButton component with loading states
-- [ ] Create basic layout with map and control panel
-- [ ] Implement responsive design for desktop and tablet
-- [ ] Add basic styling and component organization
+- [x] Create RainfallSlider component (0-20 inches, step 0.1)
+- [x] Create DurationSlider component (0.5-8 hours, step 0.5)
+- [x] Create SimulationButton component with loading states
+- [x] Create basic layout with map and control panel
+- [x] Implement responsive design for desktop and tablet
+- [x] Add basic styling and component organization
 
 ### State Management
 - [ ] Set up Redux Toolkit store structure
