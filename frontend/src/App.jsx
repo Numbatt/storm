@@ -80,7 +80,7 @@ const AppContent = ({ rainfall, duration, loading, error, results, statistics })
           <FloodMap />
           
           {/* Subtle overlay gradient */}
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-black/10 pointer-events-none" />
+          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-black/10 pointer-events-none z-0" />
         </motion.div>
 
         {/* Control Panel */}
