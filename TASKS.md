@@ -146,27 +146,79 @@
 
 ---
 
+## Milestone 4.6: Risk Visualization & Algorithm Improvements (PRIORITY FIX)
+
+### Enhanced Risk Calculation Algorithm
+- [x] Implement enhanced risk formula with multiple factors (elevation, slope, proximity)
+- [x] Add basic slope calculation from DEM data (gradient between adjacent points)
+- [x] Add distance-to-water calculation for proximity risk factor
+- [x] Implement percentile-based risk categorization instead of fixed thresholds
+- [x] Create dynamic risk distribution to ensure proper HIGH/MODERATE/LOW spread
+- [x] Test new algorithm with various rainfall scenarios to verify distribution
+
+### Risk Zone Visualization (Replace Point Markers)
+- [ ] Research visualization approach: contour polygons vs heatmap overlay
+- [ ] Install required Leaflet plugins (leaflet.heat or polygon/contour library)
+- [ ] Create RiskZoneLayer component to replace individual marker system
+- [ ] Implement contiguous area grouping algorithm for similar risk levels
+- [ ] Add smooth color transitions and opacity settings for risk zones
+- [ ] Test performance with large datasets and multiple risk zones
+
+### Enhanced Popup Data Display
+- [x] Fix RiskAssessmentPopup to show complete data set
+- [x] Implement proper color coding system (red=HIGH, yellow=MODERATE, green=LOW)
+- [x] Add elevation display with proper formatting (meters, 2 decimal places)
+- [x] Add coordinates with 6-decimal precision display
+- [x] Add risk score with 3-decimal precision and risk category
+- [x] Add visual risk indicator (colored dot/badge) in popup header
+
+### Color System Standardization
+- [x] Create centralized color scheme constants file
+- [x] Define exact color values: RED (#ef4444), YELLOW (#f59e0b), GREEN (#10b981)
+- [x] Ensure consistent color usage across markers, zones, legend, and popups
+- [ ] Update risk legend component to match new risk zone colors
+- [ ] Test color accessibility and contrast ratios
+- [ ] Document color coding standards for future development
+
+### Algorithm Testing & Validation
+- [ ] Create test cases with known high-risk areas (near bayous, low elevation)
+- [ ] Validate that risk distribution shows variation (not all moderate)
+- [ ] Test edge cases: extreme rainfall values, completely flat areas
+- [ ] Compare algorithm results with manual/visual risk assessment
+- [ ] Create algorithm performance benchmarks
+- [ ] Document algorithm improvements and mathematical reasoning
+
+### Backend API Enhancements
+- [ ] Update simulation endpoint to return enhanced risk data
+- [ ] Add slope and proximity data to coordinate lookup endpoints
+- [ ] Implement caching for slope calculations (computationally expensive)
+- [ ] Add validation for new risk calculation parameters
+- [ ] Update API documentation for new data fields
+- [ ] Test API performance with enhanced calculations
+
+---
+
 ## Milestone 5: WhiteboxTools Integration (Phase 2A)
 
 ### WhiteboxTools Setup
 - [ ] Create WhiteboxService class for tool integration
 - [ ] Implement flow accumulation calculation
-- [ ] Add slope calculation from DEM data
+- [ ] Add slope calculation from DEM data (replace basic version)
 - [ ] Integrate watershed analysis
 - [ ] Add flow length calculations
 - [ ] Test individual tools with sample DEM data
 
 ### Advanced Risk Processing
-- [ ] Replace simple calculation with hydrological analysis
-- [ ] Implement drainage coefficient calculation from slope
-- [ ] Add flow accumulation to risk assessment
+- [ ] Replace enhanced calculation with full hydrological analysis
+- [ ] Implement drainage coefficient calculation from slope and flow accumulation
+- [ ] Add flow accumulation to risk assessment formula
 - [ ] Integrate watershed boundaries into risk zones
-- [ ] Create composite risk score from multiple factors
+- [ ] Create composite risk score from multiple hydrological factors
 - [ ] Validate results against known flood-prone areas
 
 ### Performance Optimization
-- [ ] Implement DEM data caching
-- [ ] Add processing result caching
+- [ ] Implement DEM data caching for WhiteboxTools
+- [ ] Add processing result caching for expensive calculations
 - [ ] Optimize WhiteboxTools parameter tuning
 - [ ] Add parallel processing for large datasets
 - [ ] Monitor memory usage during processing
@@ -177,8 +229,8 @@
 ## Milestone 6: Spatial Clustering & Optimization (Phase 2B)
 
 ### Intelligent Clustering
-- [ ] Implement grid-based marker clustering algorithm
-- [ ] Add proximity-based marker consolidation
+- [ ] Implement grid-based risk zone clustering algorithm
+- [ ] Add proximity-based zone consolidation
 - [ ] Create priority system for critical infrastructure areas
 - [ ] Implement radius-based risk zone analysis
 - [ ] Add cluster size optimization based on zoom level
@@ -205,16 +257,16 @@
 - [ ] Test API connectivity and response format
 
 ### Explanation Generation
-- [ ] Create explanation request for each risk marker
+- [ ] Create explanation request for each risk zone/marker
 - [ ] Implement context-aware prompt generation
-- [ ] Add marker-specific details (elevation, nearby features)
+- [ ] Add zone-specific details (elevation, slope, proximity, flow accumulation)
 - [ ] Generate 2-3 sentence explanations for each risk level
 - [ ] Add explanation caching to reduce API calls
 - [ ] Test explanation quality and relevance
 
 ### UI Integration
-- [ ] Create ExplanationModal component
-- [ ] Add click handlers to risk markers
+- [ ] Create ExplanationModal component for risk zones
+- [ ] Add click handlers to risk zones (not just markers)
 - [ ] Implement loading states for explanation requests
 - [ ] Add fallback explanations for API failures
 - [ ] Create explanation display with proper formatting
@@ -254,22 +306,22 @@
 
 ### Unit Testing
 - [ ] Set up Jest testing framework
-- [ ] Write tests for risk calculation algorithms
+- [ ] Write tests for enhanced risk calculation algorithms
 - [ ] Add tests for API endpoints
-- [ ] Create tests for React components
+- [ ] Create tests for React components (including new risk zones)
 - [ ] Add tests for utility functions
 - [ ] Achieve 80%+ test coverage
 
 ### Integration Testing
-- [ ] Test complete simulation workflow
-- [ ] Add API integration tests
+- [ ] Test complete simulation workflow with risk zones
+- [ ] Add API integration tests for enhanced endpoints
 - [ ] Test WhiteboxTools integration
 - [ ] Verify NVIDIA NIM API integration
 - [ ] Test error handling scenarios
 - [ ] Add performance benchmarking tests
 
 ### User Testing
-- [ ] Create user testing scenarios
+- [ ] Create user testing scenarios for risk zone interaction
 - [ ] Test with non-technical users
 - [ ] Gather feedback on explanation quality
 - [ ] Test accessibility features
@@ -334,6 +386,15 @@
 
 ---
 
-**Current Focus**: Milestone 1 - Project Setup & Environment
-**Next Priority**: Complete development environment setup and basic project initialization
-**Last Updated**: September 20, 2025
+## Immediate Action Items (Next Session Priority)
+
+1. **Enhanced Risk Algorithm** - Fix the "all moderate" distribution issue
+2. **Risk Zone Visualization** - Replace equally-spaced markers with area-based zones
+3. **Complete Popup Data** - Restore elevation, coordinates, and risk score display
+4. **Color Standardization** - Ensure red/yellow/green coding works consistently
+
+---
+
+**Current Focus**: Milestone 4.6 - Risk Visualization & Algorithm Improvements (PRIORITY)
+**Next Priority**: Enhanced risk calculation algorithm and risk zone implementation
+**Last Updated**: September 21, 2025
