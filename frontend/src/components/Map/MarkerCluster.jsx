@@ -33,8 +33,11 @@ const MarkerCluster = ({ markers = [] }) => {
   return (
     <>
       {markers.map((marker, index) => {
-        // Ensure marker has required properties
-        if (!marker.latitude || !marker.longitude) {
+        // Ensure marker has required properties (check both lat/lng and latitude/longitude)
+        const lat = marker.lat || marker.latitude
+        const lng = marker.lng || marker.longitude
+        
+        if (!lat || !lng) {
           return null
         }
 
@@ -44,7 +47,7 @@ const MarkerCluster = ({ markers = [] }) => {
         return (
           <Marker
             key={index}
-            position={[marker.latitude, marker.longitude]}
+            position={[lat, lng]}
             icon={icon}
           >
             <Popup>
@@ -78,7 +81,7 @@ const MarkerCluster = ({ markers = [] }) => {
                   <div className="flex justify-between">
                     <span>Coordinates:</span>
                     <span className="font-mono text-xs">
-                      {marker.latitude.toFixed(4)}, {marker.longitude.toFixed(4)}
+                      {lat.toFixed(4)}, {lng.toFixed(4)}
                     </span>
                   </div>
                 </div>

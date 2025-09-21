@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useMap, useMapEvents } from 'react-leaflet'
 import { useSelector } from 'react-redux'
 import { selectResults } from '../../store/slices/simulationSlice'
+import { getRiskColor } from '../../constants/colors'
 
 const RiskAssessmentPopup = () => {
   const [isShiftPressed, setIsShiftPressed] = useState(false)
@@ -75,11 +76,20 @@ const RiskAssessmentPopup = () => {
       const { lat, lng } = e.latlng
       const riskMarker = findRiskDataForCoordinates(lat, lng)
 
-      // Temporarily disable elevation fetching due to coordinate transformation issues
+      // Fetch elevation data from backend
       let elevationData = null
+      try {
+        const response = await fetch(`/api/elevation?lat=${lat}&lng=${lng}`)
+        if (response.ok) {
+          const data = await response.json()
+          elevationData = data.elevation
+        }
+      } catch (error) {
+        console.error('Error fetching elevation:', error)
+      }
 
       const popupInfo = {
-        coordinates: { lat: lat.toFixed(4), lng: lng.toFixed(4) },
+        coordinates: { lat: lat.toFixed(6), lng: lng.toFixed(6) }, // 6-decimal precision
         elevation: elevationData,
         existingRisk: riskMarker,
         clickPosition: e.containerPoint,
@@ -133,9 +143,19 @@ const RiskAssessmentPopup = () => {
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-lg font-semibold text-gray-800">
-          Risk Assessment
-        </h3>
+        <div className="flex items-center">
+          <h3 className="text-lg font-semibold text-gray-800">
+            Risk Assessment
+          </h3>
+          {/* Visual risk indicator */}
+          {popupData.existingRisk && (
+            <div
+              className="ml-2 w-3 h-3 rounded-full border border-white shadow-sm"
+              style={{ backgroundColor: popupData.existingRisk.riskColor }}
+              title={`${popupData.existingRisk.riskLevel} Risk`}
+            />
+          )}
+        </div>
         <button
           onClick={handleClosePopup}
           className="text-gray-400 hover:text-gray-600 p-1"
@@ -149,8 +169,8 @@ const RiskAssessmentPopup = () => {
       {/* Location Info */}
       <div className="space-y-2 mb-4 text-sm">
         <div className="flex justify-between">
-          <span className="text-gray-600">Location:</span>
-          <span className="font-mono text-gray-800">
+          <span className="text-gray-600">Coordinates:</span>
+          <span className="font-mono text-gray-800 text-xs">
             {popupData.coordinates.lat}, {popupData.coordinates.lng}
           </span>
         </div>
@@ -159,20 +179,53 @@ const RiskAssessmentPopup = () => {
           <div className="flex justify-between">
             <span className="text-gray-600">Elevation:</span>
             <span className="font-mono text-gray-800">
-              {popupData.elevation.toFixed(1)}m
+              {popupData.elevation.toFixed(2)}m
             </span>
           </div>
         )}
 
         {popupData.existingRisk && (
-          <div className="flex justify-between">
-            <span className="text-gray-600">Current Risk:</span>
-            <span
-              className="font-medium"
-              style={{ color: popupData.existingRisk.riskColor }}
-            >
-              {popupData.existingRisk.riskLevel}
-            </span>
+          <>
+            <div className="flex justify-between">
+              <span className="text-gray-600">Risk Level:</span>
+              <span
+                className="font-medium"
+                style={{ color: popupData.existingRisk.riskColor }}
+              >
+                {popupData.existingRisk.riskLevel}
+              </span>
+            </div>
+
+            <div className="flex justify-between">
+              <span className="text-gray-600">Risk Score:</span>
+              <span className="font-mono text-gray-800">
+                {popupData.existingRisk.riskScore.toFixed(3)}
+              </span>
+            </div>
+
+            {popupData.existingRisk.slope !== undefined && (
+              <div className="flex justify-between">
+                <span className="text-gray-600">Slope:</span>
+                <span className="font-mono text-gray-800">
+                  {popupData.existingRisk.slope.toFixed(2)}%
+                </span>
+              </div>
+            )}
+
+            {popupData.existingRisk.proximityToWater !== undefined && (
+              <div className="flex justify-between">
+                <span className="text-gray-600">Water Proximity:</span>
+                <span className="font-mono text-gray-800">
+                  {popupData.existingRisk.proximityToWater.toFixed(2)}
+                </span>
+              </div>
+            )}
+          </>
+        )}
+
+        {!popupData.existingRisk && (
+          <div className="text-center text-gray-500 italic py-2">
+            No risk data available for this location
           </div>
         )}
       </div>

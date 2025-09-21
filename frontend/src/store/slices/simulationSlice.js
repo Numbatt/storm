@@ -112,7 +112,7 @@ export const runSimulation = () => async (dispatch, getState) => {
   try {
     dispatch(setProgressStage('Loading elevation data...'))
 
-    const response = await fetch('/api/simulation', {
+    const response = await fetch('http://localhost:3001/api/simulation', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
