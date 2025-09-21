@@ -7,6 +7,7 @@ import requests
 import yaml
 from typing import Optional
 import random
+import os
 
 
 class WeatherFetcher:
@@ -15,7 +16,8 @@ class WeatherFetcher:
         with open(config_path, 'r') as f:
             self.config = yaml.safe_load(f)
         
-        self.api_key = self.config['api_keys']['openweather']
+        # Read API key from environment variable
+        self.api_key = os.getenv('OPENWEATHER_API_KEY', 'YOUR_OPENWEATHER_API_KEY')
         self.base_url = "https://api.openweathermap.org/data/2.5"
     
     def get_rainfall(self, lat: float, lon: float) -> float:

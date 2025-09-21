@@ -1,9 +1,6 @@
 # Flood Risk AI Configuration
-api_keys:
-  google_maps_api_key: "AIzaSyDBIzYioWwnuDHi7GwjsN91y3Pvr76tExU"
-  google_street_view: "AIzaSyDBIzYioWwnuDHi7GwjsN91y3Pvr76tExU"
-  google_elevation: "AIzaSyDBIzYioWwnuDHi7GwjsN91y3Pvr76tExU"
-  openweather: "YOUR_OPENWEATHER_API_KEY"
+# API keys are now loaded from environment variables:
+# GOOGLE_MAPS_API_KEY, GOOGLE_STREET_VIEW_API_KEY, GOOGLE_ELEVATION_API_KEY, OPENWEATHER_API_KEY
 
 # Alternative free APIs (if Google APIs not available)
 alternative_apis:

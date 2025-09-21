@@ -8,6 +8,7 @@ import yaml
 import numpy as np
 from typing import Optional
 import math
+import os
 
 
 class ElevationFetcher:
@@ -16,7 +17,8 @@ class ElevationFetcher:
         with open(config_path, 'r') as f:
             self.config = yaml.safe_load(f)
         
-        self.google_api_key = self.config['api_keys']['google_elevation']
+        # Read API key from environment variable
+        self.google_api_key = os.getenv('GOOGLE_ELEVATION_API_KEY', 'YOUR_GOOGLE_ELEVATION_API_KEY')
         self.google_url = "https://maps.googleapis.com/maps/api/elevation/json"
         self.free_api_url = self.config['alternative_apis']['elevation']
     
