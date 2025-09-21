@@ -42,25 +42,7 @@ const RainfallSlider = ({ min = 0, max = 20, step = 0.1 }) => {
     return `linear-gradient(to right, ${gradientStops})`
   }
 
-  const trackFillStyle = {
-    background: getGradientColor(value),
-    width: `${((value - min) / (max - min)) * 100}%`,
-    transition: 'none',
-    position: 'relative',
-    overflow: 'hidden'
-  }
 
-  // Background gradient for the entire track
-  const trackBackgroundStyle = {
-    background: `linear-gradient(to right, 
-      #87CEEB 0%, 
-      #4FC3F7 15%, 
-      #2196F3 35%, 
-      #1565C0 60%, 
-      #7B1FA2 80%, 
-      #C62828 100%)`,
-    opacity: 0.3
-  }
 
   return (
     <motion.div 
@@ -98,7 +80,38 @@ const RainfallSlider = ({ min = 0, max = 20, step = 0.1 }) => {
         </motion.span>
       </div>
 
-      <div className="relative">
+      <div className="relative h-6 flex items-center">
+        {/* Custom gradient track background - centered vertically */}
+        <div 
+          className="absolute top-1/2 left-0 w-full h-1 rounded-lg pointer-events-none z-0 -translate-y-1/2"
+          style={{
+            background: `linear-gradient(to right, 
+              #87CEEB 0%, 
+              #4FC3F7 15%, 
+              #2196F3 35%, 
+              #1565C0 60%, 
+              #7B1FA2 80%, 
+              #C62828 100%)`,
+            opacity: 0.3
+          }}
+        />
+        
+        {/* Custom gradient fill - up to current value, centered vertically */}
+        <div 
+          className="absolute top-1/2 left-0 h-1 rounded-lg pointer-events-none z-10 -translate-y-1/2"
+          style={{
+            background: `linear-gradient(to right, 
+              #87CEEB 0%, 
+              #4FC3F7 15%, 
+              #2196F3 35%, 
+              #1565C0 60%, 
+              #7B1FA2 80%, 
+              #C62828 100%)`,
+            width: `${((value - min) / (max - min)) * 100}%`,
+            transition: 'width 0.1s ease-out'
+          }}
+        />
+        
         <input
           type="range"
           min={min}
@@ -107,46 +120,53 @@ const RainfallSlider = ({ min = 0, max = 20, step = 0.1 }) => {
           value={value}
           onChange={handleChange}
           onInput={handleInput}
-          className="w-full h-2 bg-gray-700/50 dark:bg-gray-700/50 light:bg-gray-300 rounded-lg appearance-none cursor-pointer rainfall-slider
+          className="relative z-20 w-full bg-transparent rounded-lg appearance-none cursor-pointer slider-integrated
+                     outline-none focus:outline-none focus-visible:outline-none
                      [&::-webkit-slider-runnable-track]:appearance-none
-                     [&::-webkit-slider-runnable-track]:bg-gray-700/50
-                     [&::-webkit-slider-runnable-track]:dark:bg-gray-700/50
-                     [&::-webkit-slider-runnable-track]:light:bg-gray-300
+                     [&::-webkit-slider-runnable-track]:h-1
                      [&::-webkit-slider-runnable-track]:rounded-lg
-                     [&::-webkit-slider-runnable-track]:h-2
+                     [&::-webkit-slider-runnable-track]:bg-transparent
+                     [&::-webkit-slider-runnable-track]:border-none
+                     [&::-webkit-slider-runnable-track]:outline-none
                      [&::-webkit-slider-thumb]:appearance-none
-                     [&::-webkit-slider-thumb]:h-7
-                     [&::-webkit-slider-thumb]:w-7
-                     [&::-webkit-slider-thumb]:rounded-full
+                     [&::-webkit-slider-thumb]:h-5
+                     [&::-webkit-slider-thumb]:w-1
+                     [&::-webkit-slider-thumb]:rounded-sm
                      [&::-webkit-slider-thumb]:bg-white
                      [&::-webkit-slider-thumb]:cursor-pointer
-                     [&::-webkit-slider-thumb]:shadow-xl
-                     [&::-webkit-slider-thumb]:border-3
-                     [&::-webkit-slider-thumb]:border-blue-400
-                     [&::-webkit-slider-thumb]:transition-none
-                     [&::-webkit-slider-thumb]:duration-0
-                     [&::-moz-range-thumb]:h-7
-                     [&::-moz-range-thumb]:w-7
-                     [&::-moz-range-thumb]:rounded-full
+                     [&::-webkit-slider-thumb]:shadow-lg
+                     [&::-webkit-slider-thumb]:border-none
+                     [&::-webkit-slider-thumb]:transition-all
+                     [&::-webkit-slider-thumb]:duration-200
+                     [&::-webkit-slider-thumb]:ease-in-out
+                     [&::-webkit-slider-thumb]:hover:h-6
+                     [&::-webkit-slider-thumb]:hover:shadow-xl
+                     [&::-webkit-slider-thumb]:hover:bg-blue-50
+                     [&::-webkit-slider-thumb]:active:h-4
+                     [&::-webkit-slider-thumb]:active:shadow-md
+                     [&::-webkit-slider-thumb]:outline-none
+                     [&::-moz-range-thumb]:h-5
+                     [&::-moz-range-thumb]:w-1
+                     [&::-moz-range-thumb]:rounded-sm
                      [&::-moz-range-thumb]:bg-white
                      [&::-moz-range-thumb]:cursor-pointer
-                     [&::-moz-range-thumb]:border-3
-                     [&::-moz-range-thumb]:border-blue-400
                      [&::-moz-range-thumb]:border-none
-                     [&::-moz-range-thumb]:shadow-xl
-                     [&::-moz-range-track]:bg-gray-700/50
+                     [&::-moz-range-thumb]:shadow-lg
+                     [&::-moz-range-thumb]:transition-all
+                     [&::-moz-range-thumb]:duration-200
+                     [&::-moz-range-thumb]:ease-in-out
+                     [&::-moz-range-thumb]:hover:h-6
+                     [&::-moz-range-thumb]:hover:shadow-xl
+                     [&::-moz-range-thumb]:hover:bg-blue-50
+                     [&::-moz-range-thumb]:active:h-4
+                     [&::-moz-range-thumb]:active:shadow-md
+                     [&::-moz-range-thumb]:outline-none
+                     [&::-moz-range-track]:h-1
                      [&::-moz-range-track]:rounded-lg
-                     [&::-moz-range-track]:h-2"
+                     [&::-moz-range-track]:bg-transparent
+                     [&::-moz-range-track]:border-none
+                     [&::-moz-range-track]:outline-none"
         />
-        
-        {/* Custom gradient track fill */}
-        <div 
-          className="absolute top-0 left-0 h-2 rounded-lg pointer-events-none rainfall-gradient-fill"
-          style={trackFillStyle}
-        >
-          {/* Subtle texture overlay */}
-          <div className="absolute inset-0 rounded-lg opacity-30 rainfall-texture"></div>
-        </div>
       </div>
 
       <div className="flex justify-between text-xs text-gray-400 dark:text-gray-400 light:text-gray-600 mt-2">
