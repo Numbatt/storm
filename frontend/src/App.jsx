@@ -42,7 +42,7 @@ function App() {
 
 const AppContent = ({ rainfall, duration, loading, error, results, statistics }) => {
   return (
-    <div className="h-screen w-screen bg-gradient-to-br from-gray-900 via-black to-gray-800 dark:from-gray-900 dark:via-black dark:to-gray-800 text-white overflow-hidden">
+    <div className="h-screen w-screen bg-gradient-to-br from-gray-900 via-black to-gray-800 dark:from-gray-900 dark:via-black dark:to-gray-800 text-white overflow-hidden flex flex-col">
       {/* Header */}
       <motion.header 
         initial={{ y: -100, opacity: 0 }}
@@ -69,13 +69,13 @@ const AppContent = ({ rainfall, duration, loading, error, results, statistics })
       </motion.header>
 
       {/* Main Content */}
-      <main className="flex-1 flex relative">
+      <main className="flex-1 flex relative min-h-0">
         {/* Map Area */}
         <motion.div 
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 1, delay: 0.3 }}
-          className="flex-1 relative"
+          className="flex-1 relative min-h-0"
         >
           <FloodMap />
           
@@ -88,7 +88,7 @@ const AppContent = ({ rainfall, duration, loading, error, results, statistics })
           initial={{ x: 100, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.5 }}
-          className="w-80 bg-black/40 backdrop-blur-xl border-l border-white/10 overflow-y-auto"
+          className="w-80 bg-black/40 backdrop-blur-xl border-l border-white/10 overflow-y-auto flex-shrink-0"
         >
           <div className="p-6">
             <h2 className="text-xl font-light mb-8 text-white">

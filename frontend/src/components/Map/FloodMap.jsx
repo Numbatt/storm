@@ -31,7 +31,7 @@ const FloodMap = () => {
   const currentTileLayer = isDark ? darkTileLayer : lightTileLayer
 
   return (
-    <div className="h-full w-full">
+    <div className="h-full w-full min-h-0">
       <MapContainer
         center={fifthWardCenter}
         zoom={14}
