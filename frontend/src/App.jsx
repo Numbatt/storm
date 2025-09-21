@@ -157,15 +157,15 @@ const AppContent = ({ rainfall, duration, loading, error, results, statistics })
                   </div>
                   <div className="flex justify-between">
                     <span>High Risk:</span>
-                    <span className="text-red-400 font-medium">{statistics.highRisk}</span>
+                    <span className="text-red-400 font-medium">{statistics.high}</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Moderate Risk:</span>
-                    <span className="text-yellow-400 font-medium">{statistics.moderateRisk}</span>
+                    <span className="text-yellow-400 font-medium">{statistics.moderate}</span>
                   </div>
                   <div className="flex justify-between">
                     <span>Low Risk:</span>
-                    <span className="text-green-400 font-medium">{statistics.lowRisk}</span>
+                    <span className="text-green-400 font-medium">{statistics.low}</span>
                   </div>
                 </div>
               </motion.div>
