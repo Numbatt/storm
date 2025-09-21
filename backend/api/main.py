@@ -110,6 +110,14 @@ def analyze_flood_risk(lat: float, lon: float, rainfall: float = 25.0,
     else:
         surfaces = surface_detector.analyze_local_images(existing_images)
     
+    # Save segmented images for frontend display
+    results_dir = os.path.join(os.path.dirname(__file__), "data", "results")
+    if json_mode:
+        with redirect_stdout(StringIO()):
+            segmentation_images = surface_detector.save_segmented_images(existing_images, results_dir, lat, lon)
+    else:
+        segmentation_images = surface_detector.save_segmented_images(existing_images, results_dir, lat, lon)
+    
     # Step 2: Get elevation and slope
     if not debug and not json_mode:
         print("⛰️  Loading stored elevation and slope...")
@@ -174,6 +182,21 @@ def analyze_flood_risk(lat: float, lon: float, rainfall: float = 25.0,
     else:
         recommendations = recommender.generate_recommendations(risk_data, road_type=road_type)
     
+    # Prepare segmentation folder info for frontend
+    coord_folder = f"{lat}_{lon}"
+    segmentation_folder = f"/static/results/{coord_folder}/"
+    
+    # Create images array with filenames only
+    images_list = []
+    if segmentation_images:
+        # Extract just the filenames from the full paths
+        for angle, path in segmentation_images.items():
+            if path:
+                filename = os.path.basename(path.split('/')[-1])  # Get filename from path
+                images_list.append(filename)
+        # Sort to ensure consistent order: 0.jpg, 90.jpg, 180.jpg, 270.jpg
+        images_list.sort(key=lambda x: int(x.split('.')[0]) if x.split('.')[0].isdigit() else 999)
+    
     # Compile results
     results = {
         'coords': {'lat': lat, 'lon': lon},
@@ -192,6 +215,9 @@ def analyze_flood_risk(lat: float, lon: float, rainfall: float = 25.0,
         },
         'recommendation': recommendations,
         'streetImageUrl': existing_images[0] if existing_images else None,
+        'segmentation_images': segmentation_images,  # Keep for backward compatibility
+        'segmentation_folder': segmentation_folder,
+        'images': images_list,
         'timestamp': datetime.now().isoformat()
     }
     

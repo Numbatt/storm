@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Routes, Route, Link } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { motion } from 'framer-motion'
 import { selectRainfall, selectDuration, selectLoading, selectError, selectResults, selectStatistics } from './store/slices/simulationSlice'
@@ -8,6 +9,8 @@ import DurationSlider from './components/Controls/DurationSlider'
 import SimulationButton from './components/Controls/SimulationButton'
 import LandingPage from './components/Hero/LandingPage'
 import ThemeToggle from './components/ThemeToggle'
+import RiskAnalysis from './pages/RiskAnalysis'
+import StormAnalysis from './pages/StormAnalysis'
 
 function App() {
   const [showLandingPage, setShowLandingPage] = useState(true)
@@ -29,14 +32,20 @@ function App() {
   }
 
   return (
-    <AppContent 
-      rainfall={rainfall}
-      duration={duration}
-      loading={loading}
-      error={error}
-      results={results}
-      statistics={statistics}
-    />
+    <Routes>
+      <Route path="/" element={
+        <AppContent 
+          rainfall={rainfall}
+          duration={duration}
+          loading={loading}
+          error={error}
+          results={results}
+          statistics={statistics}
+        />
+      } />
+      <Route path="/analysis" element={<RiskAnalysis />} />
+      <Route path="/analysis-storm" element={<StormAnalysis />} />
+    </Routes>
   )
 }
 
@@ -53,7 +62,6 @@ const AppContent = ({ rainfall, duration, loading, error, results, statistics })
         <div className="flex items-center justify-between max-w-7xl mx-auto">
           <div>
             <h1 className="text-2xl font-light tracking-wide">
-              <span className="text-white">Fifth Ward </span>
               <span 
                 className="italic bg-gradient-to-r from-[#51A3F0] via-[#99CBF7] to-[#E0F1FF] bg-clip-text text-transparent"
                 style={{ fontFamily: 'Georgia, serif' }}
@@ -64,7 +72,18 @@ const AppContent = ({ rainfall, duration, loading, error, results, statistics })
             <p className="text-sm text-gray-300 mt-1">Houston, Texas - Interactive Flood Risk Assessment</p>
           </div>
           
-          <ThemeToggle />
+          <div className="flex items-center space-x-3">
+            <Link 
+              to="/analysis-storm" 
+              className="px-4 py-2 bg-gradient-to-r from-[#7dd3ff] to-[#60a5fa] text-gray-900 rounded-lg hover:from-[#60a5fa] hover:to-[#7dd3ff] transition-all duration-300 text-sm font-bold flex items-center space-x-2"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+              <span>Storm Analysis</span>
+            </Link>
+            <ThemeToggle />
+          </div>
         </div>
       </motion.header>
 

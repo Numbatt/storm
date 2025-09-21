@@ -21,3 +21,133 @@ html, body {
   height: 100%;
   width: 100%;
 }
+
+/* Storm Analysis Theme Variables */
+:root {
+  --bolt-core: #7dd3ff;
+  --bolt-glow: #60a5fa;
+  --dot-idle: #334155;
+  --dot-active: #93c5fd;
+  --dot-done: #22c55e;
+  --dot-error: #ef4444;
+  --storm-bg-primary: #0f172a;
+  --storm-bg-secondary: #1e293b;
+  --lightning-shadow: 0 0 20px var(--bolt-glow);
+}
+
+/* Storm Background */
+.storm-background {
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(29, 78, 216, 0.1) 0%, transparent 50%),
+    linear-gradient(135deg, var(--storm-bg-primary) 0%, var(--storm-bg-secondary) 100%);
+}
+
+/* Lightning Bolt Animation */
+.lightning-bolt {
+  filter: drop-shadow(var(--lightning-shadow));
+}
+
+.lightning-bolt path {
+  stroke: var(--bolt-core);
+  stroke-width: 3;
+  fill: none;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* Storm Dots */
+.storm-dot {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  cursor: pointer;
+}
+
+.storm-dot--idle {
+  fill: var(--dot-idle);
+  stroke: var(--dot-idle);
+}
+
+.storm-dot--active {
+  fill: var(--dot-active);
+  stroke: var(--dot-active);
+  filter: drop-shadow(0 0 10px var(--dot-active));
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+.storm-dot--running {
+  fill: var(--bolt-core);
+  stroke: var(--bolt-core);
+  filter: drop-shadow(0 0 15px var(--bolt-core));
+  animation: lightning-pulse 1s ease-in-out infinite, crackle-jitter 0.1s ease-in-out infinite;
+}
+
+.storm-dot--done {
+  fill: var(--dot-done);
+  stroke: var(--dot-done);
+  filter: drop-shadow(0 0 8px var(--dot-done));
+}
+
+.storm-dot--error {
+  fill: var(--dot-error);
+  stroke: var(--dot-error);
+  filter: drop-shadow(0 0 12px var(--dot-error));
+  animation: error-shake 0.5s ease-in-out infinite;
+}
+
+/* Storm Animations */
+@keyframes pulse-glow {
+  0%, 100% { filter: drop-shadow(0 0 10px var(--dot-active)); }
+  50% { filter: drop-shadow(0 0 20px var(--dot-active)); }
+}
+
+@keyframes lightning-pulse {
+  0%, 100% { filter: drop-shadow(0 0 15px var(--bolt-core)); }
+  50% { filter: drop-shadow(0 0 25px var(--bolt-core)); }
+}
+
+@keyframes crackle-jitter {
+  0% { transform: translate(0, 0); }
+  10% { transform: translate(-1px, 1px); }
+  20% { transform: translate(1px, -1px); }
+  30% { transform: translate(-1px, -1px); }
+  40% { transform: translate(1px, 1px); }
+  50% { transform: translate(-2px, 0); }
+  60% { transform: translate(2px, 0); }
+  70% { transform: translate(0, -2px); }
+  80% { transform: translate(0, 2px); }
+  90% { transform: translate(-1px, 0); }
+  100% { transform: translate(0, 0); }
+}
+
+@keyframes error-shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-2px); }
+  75% { transform: translateX(2px); }
+}
+
+/* Storm Spinner */
+.storm-spinner {
+  border: 2px solid transparent;
+  border-top: 2px solid var(--bolt-core);
+  border-radius: 50%;
+  animation: storm-spin 1s linear infinite;
+}
+
+@keyframes storm-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .storm-dot--active,
+  .storm-dot--running,
+  .storm-dot--error {
+    animation: none;
+  }
+  
+  .lightning-bolt path {
+    animation: none;
+  }
+}

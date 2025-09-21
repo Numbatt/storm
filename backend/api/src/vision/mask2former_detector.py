@@ -13,6 +13,7 @@ import torch
 from typing import Dict, List, Tuple, Optional
 import matplotlib.pyplot as plt
 import warnings
+import shutil
 
 try:
     from transformers import Mask2FormerImageProcessor, Mask2FormerForUniversalSegmentation
@@ -390,6 +391,144 @@ class Mask2FormerDetector:
                 
             except Exception as e:
                 print(f"   Failed to save overlay for {os.path.basename(image_path)}: {e}")
+
+    def save_segmented_images(self, image_paths: List[str], output_dir: str, lat: float = None, lon: float = None) -> Dict[str, str]:
+        """
+        Save segmented images with overlays for frontend display in coordinate-based folders.
+        
+        Args:
+            image_paths: List of input image paths
+            output_dir: Base directory to save segmented images
+            lat: Latitude coordinate (required for consistent folder naming)
+            lon: Longitude coordinate (required for consistent folder naming)
+            
+        Returns:
+            Dictionary mapping directions to saved image paths
+        """
+        if lat is None or lon is None:
+            raise ValueError("Both lat and lon coordinates must be provided")
+        
+        os.makedirs(output_dir, exist_ok=True)
+        segmentation_paths = {}
+        
+        # Create coordinate-based folder using the exact provided coordinates
+        coord_folder = f"{lat}_{lon}"
+        coord_dir = os.path.join(output_dir, coord_folder)
+        
+        # Delete existing folder if it exists to ensure fresh results
+        if os.path.exists(coord_dir):
+            if not self.debug:
+                print(f"   🗑️  Clearing existing results for {coord_folder}")
+            shutil.rmtree(coord_dir)
+        
+        os.makedirs(coord_dir, exist_ok=True)
+        
+        for image_path in image_paths:
+            try:
+                # Extract angle from filename - expect format: lat_lon_angle.jpg
+                base_name = os.path.splitext(os.path.basename(image_path))[0]
+                parts = base_name.split('_')
+                
+                # Get the angle (last part after the last underscore)
+                if len(parts) >= 3:
+                    angle = parts[-1]  # Take the last part as angle
+                else:
+                    # Fallback if naming doesn't match expected format
+                    print(f"   Warning: Unexpected filename format for {base_name}, skipping")
+                    continue
+                
+                # Load and process image
+                image = Image.open(image_path).convert("RGB")
+                inputs = self.processor(images=image, return_tensors="pt")
+                inputs = {k: v.to(self.device) for k, v in inputs.items()}
+                
+                # Run inference
+                with torch.no_grad():
+                    outputs = self.model(**inputs)
+                
+                # Get segmentation map
+                segmentation_map = self.processor.post_process_semantic_segmentation(
+                    outputs, target_sizes=[image.size[::-1]]
+                )[0]
+                
+                # Create colored overlay blended with original image
+                overlay = self._create_blended_overlay(image, segmentation_map.cpu().numpy())
+                
+                # Save as angle.jpg (0.jpg, 90.jpg, 180.jpg, 270.jpg)
+                output_filename = f"{angle}.jpg"
+                output_path = os.path.join(coord_dir, output_filename)
+                
+                # Save as high-quality JPEG
+                overlay_pil = Image.fromarray(overlay)
+                overlay_pil.save(output_path, 'JPEG', quality=90)
+                
+                # Store relative path for API response
+                segmentation_paths[angle] = f"/static/results/{coord_folder}/{output_filename}"
+                
+                if not self.debug:
+                    print(f"   ✅ Saved segmented image: {coord_folder}/{output_filename}")
+                
+            except Exception as e:
+                print(f"   ❌ Failed to save segmented image for {os.path.basename(image_path)}: {e}")
+                continue
+        
+        return segmentation_paths
+
+    def _create_blended_overlay(self, original_image: Image.Image, segmentation_map: np.ndarray, alpha: float = 0.6) -> np.ndarray:
+        """
+        Create a blended overlay of original image with segmentation colors.
+        
+        Args:
+            original_image: PIL Image of the original street view
+            segmentation_map: Numpy array of segmentation results
+            alpha: Blending factor (0.0 = only original, 1.0 = only segmentation)
+            
+        Returns:
+            Blended image as numpy array
+        """
+        # Convert PIL image to numpy array
+        original_array = np.array(original_image)
+        height, width = segmentation_map.shape
+        
+        # Create colored segmentation overlay
+        overlay = np.zeros((height, width, 3), dtype=np.uint8)
+        
+        # Enhanced color scheme for better visibility
+        colors = {
+            "asphalt": [100, 100, 100],    # Dark gray
+            "greenery": [50, 200, 50],     # Bright green
+            "other": [150, 150, 200]       # Light blue-gray
+        }
+        
+        # Color pixels based on category
+        for class_id in np.unique(segmentation_map):
+            category = self._map_class_id_to_category(class_id)
+            color = colors[category]
+            mask = segmentation_map == class_id
+            overlay[mask] = color
+        
+        # Blend original image with colored overlay
+        # Use different alpha for different categories to highlight vegetation
+        blended = original_array.copy()
+        for class_id in np.unique(segmentation_map):
+            category = self._map_class_id_to_category(class_id)
+            mask = segmentation_map == class_id
+            
+            # Use higher alpha for greenery to make it more visible
+            category_alpha = alpha * 1.2 if category == "greenery" else alpha * 0.8
+            category_alpha = min(1.0, category_alpha)  # Clamp to 1.0
+            
+            color = colors[category]
+            mask_3d = np.stack([mask] * 3, axis=-1)
+            
+            # Blend using weighted average
+            blended = np.where(
+                mask_3d,
+                (1 - category_alpha) * blended + category_alpha * np.array(color),
+                blended
+            )
+        
+        return blended.astype(np.uint8)
     
     def _create_colored_overlay(self, segmentation_map: np.ndarray) -> np.ndarray:
         """Create a colored overlay for visualization."""

@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const path = require('path');
 const DEMService = require('./services/demService');
 const RiskProcessor = require('./services/riskProcessor');
 const FloodAnalysisService = require('./services/floodAnalysisService');
@@ -12,6 +13,10 @@ const PORT = process.env.PORT || 3001;
 
 app.use(cors());
 app.use(express.json());
+
+// Serve static files for segmentation results
+const resultsPath = path.join(__dirname, 'api', 'data', 'results');
+app.use('/static/results', express.static(resultsPath));
 
 // Initialize services
 let demService;
@@ -142,7 +147,7 @@ app.get('/api/flood-analysis/coordinates', (req, res) => {
 });
 
 app.post('/api/flood-analysis/analyze', async (req, res) => {
-  const { lat, lon, rainfall, drains, debug } = req.body;
+  const { lat, lon, rainfall, drains, road_type, debug } = req.body;
 
   // Validate required parameters
   if (typeof lat !== 'number' || typeof lon !== 'number') {
@@ -198,6 +203,7 @@ app.post('/api/flood-analysis/analyze', async (req, res) => {
     const options = {};
     if (rainfall !== undefined) options.rainfall = rainfall;
     if (drains !== undefined) options.drains = drains;
+    if (road_type !== undefined) options.road_type = road_type;
     if (debug !== undefined) options.debug = debug;
 
     console.log(`Starting flood analysis for coordinates: ${lat}, ${lon}`);
