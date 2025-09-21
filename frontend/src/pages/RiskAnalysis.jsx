@@ -126,7 +126,7 @@ function RiskAnalysisContent() {
                 Risk Analysis
               </span>
             </h1>
-            <motion.p 
+            <motion.div 
               className="text-sm text-gray-300 mt-1"
               key={currentLocation.fullName}
               initial={{ opacity: 0.7 }}
@@ -141,7 +141,7 @@ function RiskAnalysisContent() {
               ) : (
                 `${currentLocation.fullName} - Interactive Flood Risk Assessment`
               )}
-            </motion.p>
+            </motion.div>
           </div>
           
           <div className="flex items-center space-x-4">
