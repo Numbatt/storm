@@ -11,11 +11,18 @@ const DurationSlider = ({ min = 0.5, max = 8, step = 0.5 }) => {
     dispatch(setDuration(newValue))
   }
 
+  // Real-time input handler for immediate updates
+  const handleInput = (e) => {
+    const newValue = parseFloat(e.target.value)
+    dispatch(setDuration(newValue))
+  }
+
   const formatDuration = (hours) => {
     if (hours === 1) return '1 hour'
     if (hours < 1) return `${(hours * 60)} minutes`
     return `${hours} hours`
   }
+
 
   return (
     <motion.div 
@@ -53,7 +60,38 @@ const DurationSlider = ({ min = 0.5, max = 8, step = 0.5 }) => {
         </motion.span>
       </div>
 
-      <div className="relative">
+      <div className="relative h-6 flex items-center">
+        {/* Custom gradient track background - centered vertically */}
+        <div 
+          className="absolute top-1/2 left-0 w-full h-1 rounded-lg pointer-events-none z-0 -translate-y-1/2"
+          style={{
+            background: `linear-gradient(to right, 
+              #87CEEB 0%, 
+              #4FC3F7 15%, 
+              #2196F3 35%, 
+              #1565C0 60%, 
+              #7B1FA2 80%, 
+              #C62828 100%)`,
+            opacity: 0.3
+          }}
+        />
+        
+        {/* Custom gradient fill - up to current value, centered vertically */}
+        <div 
+          className="absolute top-1/2 left-0 h-1 rounded-lg pointer-events-none z-10 -translate-y-1/2"
+          style={{
+            background: `linear-gradient(to right, 
+              #87CEEB 0%, 
+              #4FC3F7 15%, 
+              #2196F3 35%, 
+              #1565C0 60%, 
+              #7B1FA2 80%, 
+              #C62828 100%)`,
+            width: `${((value - min) / (max - min)) * 100}%`,
+            transition: 'width 0.1s ease-out'
+          }}
+        />
+        
         <input
           type="range"
           min={min}
@@ -61,37 +99,53 @@ const DurationSlider = ({ min = 0.5, max = 8, step = 0.5 }) => {
           step={step}
           value={value}
           onChange={handleChange}
-          className="w-full h-2 bg-gray-700/50 dark:bg-gray-700/50 light:bg-gray-300 rounded-lg appearance-none cursor-pointer
+          onInput={handleInput}
+          className="relative z-20 w-full bg-transparent rounded-lg appearance-none cursor-pointer slider-integrated
+                     outline-none focus:outline-none focus-visible:outline-none
+                     [&::-webkit-slider-runnable-track]:appearance-none
+                     [&::-webkit-slider-runnable-track]:h-1
+                     [&::-webkit-slider-runnable-track]:rounded-lg
+                     [&::-webkit-slider-runnable-track]:bg-transparent
+                     [&::-webkit-slider-runnable-track]:border-none
+                     [&::-webkit-slider-runnable-track]:outline-none
                      [&::-webkit-slider-thumb]:appearance-none
-                     [&::-webkit-slider-thumb]:h-6
-                     [&::-webkit-slider-thumb]:w-6
-                     [&::-webkit-slider-thumb]:rounded-full
-                     [&::-webkit-slider-thumb]:bg-gradient-to-r
-                     [&::-webkit-slider-thumb]:from-[#74B5F2]
-                     [&::-webkit-slider-thumb]:to-[#BBDCFA]
+                     [&::-webkit-slider-thumb]:h-5
+                     [&::-webkit-slider-thumb]:w-1
+                     [&::-webkit-slider-thumb]:rounded-sm
+                     [&::-webkit-slider-thumb]:bg-white
                      [&::-webkit-slider-thumb]:cursor-pointer
                      [&::-webkit-slider-thumb]:shadow-lg
-                     [&::-webkit-slider-thumb]:border-2
-                     [&::-webkit-slider-thumb]:border-white
-                     [&::-moz-range-thumb]:h-6
-                     [&::-moz-range-thumb]:w-6
-                     [&::-moz-range-thumb]:rounded-full
-                     [&::-moz-range-thumb]:bg-gradient-to-r
-                     [&::-moz-range-thumb]:from-[#74B5F2]
-                     [&::-moz-range-thumb]:to-[#BBDCFA]
+                     [&::-webkit-slider-thumb]:border-none
+                     [&::-webkit-slider-thumb]:transition-all
+                     [&::-webkit-slider-thumb]:duration-200
+                     [&::-webkit-slider-thumb]:ease-in-out
+                     [&::-webkit-slider-thumb]:hover:h-6
+                     [&::-webkit-slider-thumb]:hover:shadow-xl
+                     [&::-webkit-slider-thumb]:hover:bg-blue-50
+                     [&::-webkit-slider-thumb]:active:h-4
+                     [&::-webkit-slider-thumb]:active:shadow-md
+                     [&::-webkit-slider-thumb]:outline-none
+                     [&::-moz-range-thumb]:h-5
+                     [&::-moz-range-thumb]:w-1
+                     [&::-moz-range-thumb]:rounded-sm
+                     [&::-moz-range-thumb]:bg-white
                      [&::-moz-range-thumb]:cursor-pointer
-                     [&::-moz-range-thumb]:border-2
-                     [&::-moz-range-thumb]:border-white
                      [&::-moz-range-thumb]:border-none
-                     [&::-moz-range-track]:bg-gray-700/50
+                     [&::-moz-range-thumb]:shadow-lg
+                     [&::-moz-range-thumb]:transition-all
+                     [&::-moz-range-thumb]:duration-200
+                     [&::-moz-range-thumb]:ease-in-out
+                     [&::-moz-range-thumb]:hover:h-6
+                     [&::-moz-range-thumb]:hover:shadow-xl
+                     [&::-moz-range-thumb]:hover:bg-blue-50
+                     [&::-moz-range-thumb]:active:h-4
+                     [&::-moz-range-thumb]:active:shadow-md
+                     [&::-moz-range-thumb]:outline-none
+                     [&::-moz-range-track]:h-1
                      [&::-moz-range-track]:rounded-lg
-                     [&::-moz-range-track]:h-2"
-        />
-        
-        {/* Custom track fill */}
-        <div 
-          className="absolute top-0 left-0 h-2 bg-gradient-to-r from-[#74B5F2] to-[#BBDCFA] rounded-lg pointer-events-none"
-          style={{ width: `${((value - min) / (max - min)) * 100}%` }}
+                     [&::-moz-range-track]:bg-transparent
+                     [&::-moz-range-track]:border-none
+                     [&::-moz-range-track]:outline-none"
         />
       </div>
 

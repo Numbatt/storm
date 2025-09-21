@@ -10,6 +10,19 @@
   box-sizing: border-box;
 }
 
+/* Remove all default outlines from range inputs */
+input[type="range"] {
+  outline: none !important;
+}
+
+input[type="range"]:focus {
+  outline: none !important;
+}
+
+input[type="range"]:focus-visible {
+  outline: none !important;
+}
+
 html, body {
   margin: 0;
   padding: 0;
@@ -306,14 +319,52 @@ html, body {
   }
 }
 
-/* Enhanced Rainfall Slider Styles */
-.rainfall-slider {
-  transition: all 0.2s ease;
+/* Enhanced Uniform Slider Styles */
+.slider-uniform {
+  transition: all 0.2s ease-in-out;
+  position: relative;
 }
 
-.rainfall-slider:hover [&::-webkit-slider-thumb] {
-  transform: scale(1.1);
-  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+/* Enhanced Integrated Slider Styles */
+.slider-integrated {
+  transition: all 0.2s ease-in-out;
+  position: relative;
+}
+
+/* Remove all default outlines */
+.slider-uniform,
+.slider-integrated {
+  outline: none !important;
+}
+
+.slider-uniform:focus,
+.slider-integrated:focus {
+  outline: none !important;
+}
+
+.slider-uniform:focus-visible,
+.slider-integrated:focus-visible {
+  outline: none !important;
+}
+
+/* Custom focus indication through thumb enhancement - rectangular thumbs */
+.slider-uniform:focus::-webkit-slider-thumb,
+.slider-integrated:focus::-webkit-slider-thumb {
+  background-color: #dbeafe; /* blue-100 */
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3), 0 4px 12px rgba(0, 0, 0, 0.3);
+  height: 24px; /* 6 in Tailwind units */
+}
+
+.slider-uniform:focus::-moz-range-thumb,
+.slider-integrated:focus::-moz-range-thumb {
+  background-color: #dbeafe; /* blue-100 */
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3), 0 4px 12px rgba(0, 0, 0, 0.3);
+  height: 24px; /* 6 in Tailwind units */
+}
+
+/* Legacy rainfall slider class for backwards compatibility */
+.rainfall-slider {
+  transition: all 0.2s ease;
 }
 
 .rainfall-gradient-fill {
@@ -376,38 +427,50 @@ html, body {
   background-position: 0 0, 2px 2px;
 }
 
-/* Enhanced thumb hover effects */
+/* Enhanced thumb hover effects for all slider types - rectangular thumbs */
+.slider-uniform:hover::-webkit-slider-thumb,
+.slider-integrated:hover::-webkit-slider-thumb,
 .rainfall-slider:hover::-webkit-slider-thumb {
-  transform: scale(1.1);
-  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.3), 0 4px 12px rgba(0, 0, 0, 0.3);
-  border-color: #3B82F6;
+  height: 24px; /* 6 in Tailwind units */
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3), 0 4px 12px rgba(0, 0, 0, 0.3);
+  background-color: #eff6ff; /* blue-50 */
 }
 
+.slider-uniform:hover::-moz-range-thumb,
+.slider-integrated:hover::-moz-range-thumb,
 .rainfall-slider:hover::-moz-range-thumb {
-  transform: scale(1.1);
-  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.3), 0 4px 12px rgba(0, 0, 0, 0.3);
-  border-color: #3B82F6;
+  height: 24px; /* 6 in Tailwind units */
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.3), 0 4px 12px rgba(0, 0, 0, 0.3);
+  background-color: #eff6ff; /* blue-50 */
 }
 
-/* Active state */
+/* Active state for all slider types - rectangular thumbs */
+.slider-uniform:active::-webkit-slider-thumb,
+.slider-integrated:active::-webkit-slider-thumb,
 .rainfall-slider:active::-webkit-slider-thumb {
-  transform: scale(0.95);
+  height: 16px; /* 4 in Tailwind units */
 }
 
+.slider-uniform:active::-moz-range-thumb,
+.slider-integrated:active::-moz-range-thumb,
 .rainfall-slider:active::-moz-range-thumb {
-  transform: scale(0.95);
+  height: 16px; /* 4 in Tailwind units */
 }
 
-/* Responsive adjustments for rainfall slider */
+/* Responsive adjustments for all slider types - rectangular thumbs */
 @media (max-width: 768px) {
+  .slider-uniform::-webkit-slider-thumb,
+  .slider-integrated::-webkit-slider-thumb,
   .rainfall-slider::-webkit-slider-thumb {
-    height: 8px;
-    width: 8px;
+    height: 24px; /* 6 in Tailwind units - larger on mobile */
+    width: 6px; /* 1.5 in Tailwind units - slightly wider on mobile */
   }
   
+  .slider-uniform::-moz-range-thumb,
+  .slider-integrated::-moz-range-thumb,
   .rainfall-slider::-moz-range-thumb {
-    height: 8px;
-    width: 8px;
+    height: 24px; /* 6 in Tailwind units - larger on mobile */
+    width: 6px; /* 1.5 in Tailwind units - slightly wider on mobile */
   }
   
   .rainfall-flow-animation {
@@ -456,9 +519,13 @@ html, body {
     animation: none;
   }
   
+  .slider-uniform:hover::-webkit-slider-thumb,
+  .slider-uniform:hover::-moz-range-thumb,
+  .slider-integrated:hover::-webkit-slider-thumb,
+  .slider-integrated:hover::-moz-range-thumb,
   .rainfall-slider:hover::-webkit-slider-thumb,
   .rainfall-slider:hover::-moz-range-thumb {
-    transform: none;
+    height: 20px; /* Keep normal height for reduced motion */
     transition: none;
   }
 }

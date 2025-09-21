@@ -54,8 +54,13 @@ function App() {
 }
 
 const AppContent = ({ rainfall, duration, loading, error, results, statistics }) => {
-  const [isMobile, setIsMobile] = useState(false)
-  // Initialize collapsed state based on screen size
+  // Initialize both states based on screen size consistently
+  const [isMobile, setIsMobile] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth < 768
+    }
+    return false
+  })
   const [isCollapsed, setIsCollapsed] = useState(() => {
     if (typeof window !== 'undefined') {
       return window.innerWidth < 768
@@ -70,16 +75,16 @@ const AppContent = ({ rainfall, duration, loading, error, results, statistics })
     const checkMobile = () => {
       const isMobileDevice = window.innerWidth < 768
       setIsMobile(isMobileDevice)
-      // Auto-collapse on mobile for better map visibility
-      if (isMobileDevice) {
+      // Only auto-collapse on mobile if not already set correctly
+      if (isMobileDevice && !isCollapsed) {
         setIsCollapsed(true)
       }
     }
 
-    checkMobile()
+    // Only run resize listener, don't call checkMobile() on mount since state is already initialized correctly
     window.addEventListener('resize', checkMobile)
     return () => window.removeEventListener('resize', checkMobile)
-  }, [])
+  }, [isCollapsed])
 
   const toggleCollapse = () => {
     setIsCollapsed(!isCollapsed)
@@ -162,11 +167,18 @@ const AppContent = ({ rainfall, duration, loading, error, results, statistics })
         {/* Persistent Toggle Button - Below header */}
         <motion.button
           onClick={toggleCollapse}
-          className={`fixed top-1/2 -translate-y-1/2 z-50 bg-gradient-to-r from-[#51A3F0] to-[#99CBF7] dark:from-[#51A3F0] dark:to-[#99CBF7] light:from-[#51A3F0] light:to-[#99CBF7] hover:from-[#4A96E6] hover:to-[#8BC4F5] dark:hover:from-[#4A96E6] dark:hover:to-[#8BC4F5] light:hover:from-[#4A96E6] light:hover:to-[#8BC4F5] text-white dark:text-white light:text-white shadow-lg border-0 ${
-            isCollapsed 
-              ? 'right-0 rounded-l-lg px-3 py-4' 
-              : 'right-80 rounded-r-lg px-3 py-3'
-          }`}
+          className="z-50 bg-gradient-to-r from-[#51A3F0] to-[#99CBF7] dark:from-[#51A3F0] dark:to-[#99CBF7] light:from-[#51A3F0] light:to-[#99CBF7] hover:from-[#4A96E6] hover:to-[#8BC4F5] dark:hover:from-[#4A96E6] dark:hover:to-[#8BC4F5] light:hover:from-[#4A96E6] light:hover:to-[#8BC4F5] text-white dark:text-white light:text-white shadow-lg border-0"
+          style={{
+            position: 'fixed',
+            top: '50%',
+            transform: 'translateY(-50%)',
+            right: isCollapsed ? 0 : 320,
+            borderRadius: isCollapsed ? '0.5rem 0 0 0.5rem' : '0 0.5rem 0.5rem 0',
+            paddingLeft: '0.75rem',
+            paddingRight: '0.75rem',
+            paddingTop: isCollapsed ? '1rem' : '0.75rem',
+            paddingBottom: isCollapsed ? '1rem' : '0.75rem'
+          }}
           animate={{
             right: isCollapsed ? 0 : 320
           }}
@@ -181,14 +193,12 @@ const AppContent = ({ rainfall, duration, loading, error, results, statistics })
           aria-label={isCollapsed ? 'Expand control panel' : 'Collapse control panel'}
         >
           <svg 
-            className={`w-5 h-5 transition-transform duration-150 ease-out ${
-              isCollapsed ? 'rotate-180' : ''
-            }`} 
+            className="w-5 h-5 transition-transform duration-150 ease-out"
             fill="none" 
             stroke="currentColor" 
             viewBox="0 0 24 24"
           >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={isCollapsed ? "M15 19l-7-7 7-7" : "M9 5l7 7-7 7"} />
           </svg>
         </motion.button>
 
