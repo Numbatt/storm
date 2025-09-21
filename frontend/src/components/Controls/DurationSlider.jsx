@@ -60,7 +60,7 @@ const DurationSlider = ({ min = 0.5, max = 8, step = 0.5 }) => {
         </motion.span>
       </div>
 
-      <div className="relative h-6 flex items-center">
+      <div className="relative h-6 flex items-center mx-4">
         {/* Custom gradient track background - centered vertically */}
         <div 
           className="absolute top-1/2 left-0 w-full h-1 rounded-lg pointer-events-none z-0 -translate-y-1/2"
@@ -109,8 +109,8 @@ const DurationSlider = ({ min = 0.5, max = 8, step = 0.5 }) => {
                      [&::-webkit-slider-runnable-track]:border-none
                      [&::-webkit-slider-runnable-track]:outline-none
                      [&::-webkit-slider-thumb]:appearance-none
-                     [&::-webkit-slider-thumb]:h-5
-                     [&::-webkit-slider-thumb]:w-1
+                     [&::-webkit-slider-thumb]:h-6
+                     [&::-webkit-slider-thumb]:w-3
                      [&::-webkit-slider-thumb]:rounded-sm
                      [&::-webkit-slider-thumb]:bg-white
                      [&::-webkit-slider-thumb]:cursor-pointer
@@ -125,8 +125,8 @@ const DurationSlider = ({ min = 0.5, max = 8, step = 0.5 }) => {
                      [&::-webkit-slider-thumb]:active:h-4
                      [&::-webkit-slider-thumb]:active:shadow-md
                      [&::-webkit-slider-thumb]:outline-none
-                     [&::-moz-range-thumb]:h-5
-                     [&::-moz-range-thumb]:w-1
+                     [&::-moz-range-thumb]:h-6
+                     [&::-moz-range-thumb]:w-3
                      [&::-moz-range-thumb]:rounded-sm
                      [&::-moz-range-thumb]:bg-white
                      [&::-moz-range-thumb]:cursor-pointer
