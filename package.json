@@ -10,10 +10,21 @@
     "install:all": "npm install && npm install --prefix frontend && npm install --prefix backend",
     "clean": "rm -rf frontend/node_modules backend/node_modules node_modules frontend/dist backend/dist"
   },
-  "keywords": ["flood", "simulation", "houston", "mapping", "react", "leaflet"],
+  "keywords": [
+    "flood",
+    "simulation",
+    "houston",
+    "mapping",
+    "react",
+    "leaflet"
+  ],
   "author": "",
   "license": "ISC",
   "devDependencies": {
     "concurrently": "^9.1.0"
+  },
+  "dependencies": {
+    "@turf/turf": "^7.2.0",
+    "proj4": "^2.19.10"
   }
 }

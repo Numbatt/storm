@@ -55,40 +55,40 @@
 - [x] Add basic styling and component organization
 
 ### State Management
-- [ ] Set up Redux Toolkit store structure
-- [ ] Create simulationSlice for rainfall parameters
-- [ ] Connect sliders to Redux state
-- [ ] Implement state persistence (localStorage)
-- [ ] Add state validation and error handling
-- [ ] Test state updates and component re-rendering
+- [x] Set up Redux Toolkit store structure
+- [x] Create simulationSlice for rainfall parameters
+- [x] Connect sliders to Redux state
+- [x] Implement state persistence (localStorage)
+- [x] Add state validation and error handling
+- [x] Test state updates and component re-rendering
 
 ---
 
 ## Milestone 3: Data Pipeline & Simple Risk Calculation (Phase 1C)
 
 ### DEM Data Handling
-- [ ] Acquire Fifth Ward DEM .tif file (high resolution preferred)
-- [ ] Create backend endpoint for DEM metadata (`GET /api/dem-info`)
-- [ ] Implement DEM file loading using GDAL/Node.js
-- [ ] Extract elevation data and coordinate bounds
-- [ ] Validate DEM data covers Fifth Ward area completely
-- [ ] Create utility functions for coordinate transformations
+- [x] Acquire Fifth Ward DEM .tif file (high resolution preferred)
+- [x] Create backend endpoint for DEM metadata (`GET /api/dem-info`)
+- [x] Implement DEM file loading using GDAL/Node.js
+- [x] Extract elevation data and coordinate bounds
+- [x] Validate DEM data covers Fifth Ward area completely
+- [x] Create utility functions for coordinate transformations
 
 ### Basic Risk Algorithm
-- [ ] Implement simple risk calculation without WhiteboxTools
-- [ ] Create risk scoring formula: `(rainfall * duration) / (elevation + drainage)`
-- [ ] Set hard-coded drainage coefficient (start with 0.5)
-- [ ] Implement risk categorization (High > 0.8, Moderate > 0.4, Low ≤ 0.4)
-- [ ] Create sample grid of calculation points across Fifth Ward
-- [ ] Test calculation with various rainfall parameters
+- [x] Implement simple risk calculation without WhiteboxTools
+- [x] Create risk scoring formula: `(rainfall * duration) / (elevation + drainage)`
+- [x] Set hard-coded drainage coefficient (start with 0.5)
+- [x] Implement risk categorization (High > 0.8, Moderate > 0.4, Low ≤ 0.4)
+- [x] Create sample grid of calculation points across Fifth Ward
+- [x] Test calculation with various rainfall parameters
 
 ### API Development
-- [ ] Create `POST /api/simulation` endpoint
-- [ ] Implement request validation for rainfall parameters
-- [ ] Add error handling for invalid inputs
-- [ ] Return sample risk markers data in API response
-- [ ] Add processing time measurement and logging
-- [ ] Test API with Postman/Thunder Client
+- [x] Create `POST /api/simulation` endpoint
+- [x] Implement request validation for rainfall parameters
+- [x] Add error handling for invalid inputs
+- [x] Return sample risk markers data in API response
+- [x] Add processing time measurement and logging
+- [x] Test API with Postman/Thunder Client
 
 ---
 

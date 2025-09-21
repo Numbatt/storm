@@ -1,7 +1,13 @@
-const DurationSlider = ({ value = 2, onChange, min = 0.5, max = 8, step = 0.5 }) => {
+import { useSelector, useDispatch } from 'react-redux'
+import { selectDuration, setDuration } from '../../store/slices/simulationSlice'
+
+const DurationSlider = ({ min = 0.5, max = 8, step = 0.5 }) => {
+  const dispatch = useDispatch()
+  const value = useSelector(selectDuration)
+
   const handleChange = (e) => {
     const newValue = parseFloat(e.target.value)
-    onChange(newValue)
+    dispatch(setDuration(newValue))
   }
 
   const formatDuration = (hours) => {

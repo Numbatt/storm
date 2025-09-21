@@ -1,7 +1,13 @@
-const RainfallSlider = ({ value = 5, onChange, min = 0, max = 20, step = 0.1 }) => {
+import { useSelector, useDispatch } from 'react-redux'
+import { selectRainfall, setRainfall } from '../../store/slices/simulationSlice'
+
+const RainfallSlider = ({ min = 0, max = 20, step = 0.1 }) => {
+  const dispatch = useDispatch()
+  const value = useSelector(selectRainfall)
+
   const handleChange = (e) => {
     const newValue = parseFloat(e.target.value)
-    onChange(newValue)
+    dispatch(setRainfall(newValue))
   }
 
   return (

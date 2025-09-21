@@ -1,14 +1,19 @@
-import { useState } from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { selectLoading, runSimulation } from '../../store/slices/simulationSlice'
 
 const SimulationButton = ({
-  onClick,
-  loading = false,
   disabled = false,
   children = 'Run Simulation'
 }) => {
+  const dispatch = useDispatch()
+  const loading = useSelector(selectLoading)
+
+  const handleClick = () => {
+    dispatch(runSimulation())
+  }
   return (
     <button
-      onClick={onClick}
+      onClick={handleClick}
       disabled={disabled || loading}
       className={`
         w-full py-3 px-4 rounded-lg font-medium text-white transition-all duration-200

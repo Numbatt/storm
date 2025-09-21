@@ -1,6 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const dotenv = require('dotenv');
+const DEMService = require('./services/demService');
+const RiskProcessor = require('./services/riskProcessor');
 
 dotenv.config();
 
@@ -9,6 +11,18 @@ const PORT = process.env.PORT || 3001;
 
 app.use(cors());
 app.use(express.json());
+
+// Initialize services
+let demService;
+let riskProcessor;
+
+try {
+  demService = new DEMService();
+  riskProcessor = new RiskProcessor(demService);
+  console.log('DEM and Risk Processing services initialized successfully');
+} catch (error) {
+  console.error('Error initializing services:', error.message);
+}
 
 app.get('/api/health', (req, res) => {
   res.json({
@@ -19,22 +33,24 @@ app.get('/api/health', (req, res) => {
 });
 
 app.get('/api/dem-info', (req, res) => {
-  res.json({
-    bounds: {
-      north: 29.775,
-      south: 29.745,
-      east: -95.350,
-      west: -95.380
-    },
-    resolution: 1,
-    metadata: {
-      source: 'Placeholder - Fifth Ward DEM data',
-      coordinate_system: 'WGS84'
+  try {
+    if (!demService) {
+      return res.status(500).json({
+        error: 'DEM service not available'
+      });
     }
-  });
+
+    const demInfo = demService.getDEMInfo();
+    res.json(demInfo);
+  } catch (error) {
+    console.error('Error getting DEM info:', error);
+    res.status(500).json({
+      error: 'Failed to retrieve DEM information'
+    });
+  }
 });
 
-app.post('/api/simulation', (req, res) => {
+app.post('/api/simulation', async (req, res) => {
   const { rainfall, duration } = req.body;
 
   if (!rainfall || !duration) {
@@ -55,39 +71,28 @@ app.post('/api/simulation', (req, res) => {
     });
   }
 
-  const startTime = Date.now();
-
-  const sampleMarkers = [
-    {
-      id: 1,
-      lat: 29.760,
-      lng: -95.365,
-      riskLevel: 'HIGH',
-      riskScore: 0.9
-    },
-    {
-      id: 2,
-      lat: 29.755,
-      lng: -95.370,
-      riskLevel: 'MODERATE',
-      riskScore: 0.6
-    },
-    {
-      id: 3,
-      lat: 29.765,
-      lng: -95.355,
-      riskLevel: 'LOW',
-      riskScore: 0.3
+  try {
+    if (!riskProcessor) {
+      return res.status(500).json({
+        error: 'Risk processing service not available'
+      });
     }
-  ];
 
-  const processingTime = Date.now() - startTime;
+    // Process simulation with real DEM data
+    const simulationResult = await riskProcessor.processSimulation(rainfall, duration, {
+      numPoints: 150, // Generate more points for better coverage
+      minDistance: 0.002 // ~200m minimum distance between markers
+    });
 
-  res.json({
-    riskMarkers: sampleMarkers,
-    processingTime,
-    parameters: { rainfall, duration }
-  });
+    res.json(simulationResult);
+
+  } catch (error) {
+    console.error('Simulation error:', error);
+    res.status(500).json({
+      error: 'Simulation processing failed',
+      details: error.message
+    });
+  }
 });
 
 app.listen(PORT, () => {
