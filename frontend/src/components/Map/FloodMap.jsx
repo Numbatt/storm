@@ -1,8 +1,11 @@
 import { MapContainer, TileLayer } from 'react-leaflet'
 import { useSelector } from 'react-redux'
+import { useState } from 'react'
 import { useTheme } from '../../contexts/ThemeContext'
 import { selectResults, selectLoading } from '../../store/slices/simulationSlice'
 import MarkerCluster from './MarkerCluster'
+import HeatMapLayer from './HeatMapLayer'
+import HeatMapLegend from './HeatMapLegend'
 import CoordinateInspector from './CoordinateInspector'
 import RiskAssessmentPopup from './RiskAssessmentPopup'
 import 'leaflet/dist/leaflet.css'
@@ -11,6 +14,7 @@ const FloodMap = () => {
   const { isDark } = useTheme()
   const results = useSelector(selectResults)
   const loading = useSelector(selectLoading)
+  const [useHeatMap, setUseHeatMap] = useState(true) // Default to heat map for better visualization
   
   // Fifth Ward Houston coordinates - centered on Fifth Ward neighborhood
   const fifthWardCenter = [29.77674000139737, -95.32701175952177]
@@ -57,15 +61,52 @@ const FloodMap = () => {
           minZoom={currentTileLayer.minZoom}
         />
 
-        {/* Risk Markers Layer */}
+        {/* Risk Visualization Layer - Toggle between Heat Map and Markers */}
         {results && results.length > 0 && (
-          <MarkerCluster markers={results} />
+          useHeatMap ? (
+            <HeatMapLayer data={results} />
+          ) : (
+            <MarkerCluster markers={results} />
+          )
         )}
 
         {/* Coordinate Inspection Features */}
         <CoordinateInspector />
         <RiskAssessmentPopup />
       </MapContainer>
+
+      {/* Visualization Toggle Control */}
+      {results && results.length > 0 && (
+        <div className="absolute top-4 right-4 z-[1000]">
+          <div className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-lg border border-gray-200 dark:border-gray-700 shadow-lg">
+            <div className="flex">
+              <button
+                onClick={() => setUseHeatMap(true)}
+                className={`px-3 py-2 rounded-l-lg text-sm font-medium transition-colors ${
+                  useHeatMap
+                    ? 'bg-blue-600 text-white'
+                    : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                }`}
+              >
+                Heat Map
+              </button>
+              <button
+                onClick={() => setUseHeatMap(false)}
+                className={`px-3 py-2 rounded-r-lg text-sm font-medium transition-colors ${
+                  !useHeatMap
+                    ? 'bg-blue-600 text-white'
+                    : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
+                }`}
+              >
+                Markers
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Heat Map Legend */}
+      <HeatMapLegend isVisible={useHeatMap && results && results.length > 0} />
 
       {/* Loading overlay */}
       {loading && (

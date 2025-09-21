@@ -189,7 +189,7 @@ function StormAnalysisContent() {
         if (stepId === 5) {
           // Actually call the API on the final step
           console.log('📡 Calling flood analysis API...')
-          const response = await fetch('/api/flood-analysis/analyze', {
+          const response = await fetch('http://localhost:3001/api/flood-analysis/analyze', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(requestPayload),

@@ -142,13 +142,32 @@
 - [x] Test Shift+click risk assessment popup
 - [x] Ensure proper event handling and cleanup
 - [x] Test accessibility and usability
-- [ ] Document coordinate inspection features
 
 ---
 
 ## Milestone 4.6: Risk Visualization & Algorithm Improvements (PRIORITY FIX)
 
-### Enhanced Risk Calculation Algorithm
+## 🚨 HACKATHON PRIORITY - Milestone 4.6: Critical Visual Improvements
+
+### **PHASE 1: Intelligent Sampling (MUST DO - 45 min)**
+- [x] Replace uniform 100-point grid with intelligent topography-based sampling
+- [x] Implement elevation-based sampling probability (higher density in low areas)
+- [x] Add proximity-to-water sampling bias (more points near water features)
+- [x] Test new sampling with 200-300 points for realistic patterns
+
+### **PHASE 3: Heat Map Risk Zones (MUST DO - 60 min)**
+- [x] Install leaflet.heat plugin (`npm install leaflet.heat`)
+- [x] Create HeatMapLayer component to replace marker clustering
+- [x] Implement risk score to heat intensity mapping
+- [x] Configure heat map gradient (green → yellow → red for low → high risk)
+- [x] Set appropriate radius (80px) and blur (40px) for smooth zones
+
+### **PHASE 4: Basic Heat Map Interaction (SHOULD DO - 30 min)**
+- [x] Add click handlers to heat map for coordinate inspection
+- [x] Implement heat map intensity-based popup data retrieval
+- [x] Create heat map legend showing risk level color mapping
+
+### **PHASE 2: Enhanced Risk Algorithm (COMPLETED)**
 - [x] Implement enhanced risk formula with multiple factors (elevation, slope, proximity)
 - [x] Add basic slope calculation from DEM data (gradient between adjacent points)
 - [x] Add distance-to-water calculation for proximity risk factor
@@ -156,15 +175,7 @@
 - [x] Create dynamic risk distribution to ensure proper HIGH/MODERATE/LOW spread
 - [x] Test new algorithm with various rainfall scenarios to verify distribution
 
-### Risk Zone Visualization (Replace Point Markers)
-- [ ] Research visualization approach: contour polygons vs heatmap overlay
-- [ ] Install required Leaflet plugins (leaflet.heat or polygon/contour library)
-- [ ] Create RiskZoneLayer component to replace individual marker system
-- [ ] Implement contiguous area grouping algorithm for similar risk levels
-- [ ] Add smooth color transitions and opacity settings for risk zones
-- [ ] Test performance with large datasets and multiple risk zones
-
-### Enhanced Popup Data Display
+### **Enhanced Popup Data Display (COMPLETED)**
 - [x] Fix RiskAssessmentPopup to show complete data set
 - [x] Implement proper color coding system (red=HIGH, yellow=MODERATE, green=LOW)
 - [x] Add elevation display with proper formatting (meters, 2 decimal places)
@@ -172,57 +183,44 @@
 - [x] Add risk score with 3-decimal precision and risk category
 - [x] Add visual risk indicator (colored dot/badge) in popup header
 
-### Color System Standardization
+### **Color System Standardization (COMPLETED)**
 - [x] Create centralized color scheme constants file
 - [x] Define exact color values: RED (#ef4444), YELLOW (#f59e0b), GREEN (#10b981)
-- [x] Ensure consistent color usage across markers, zones, legend, and popups
-- [ ] Update risk legend component to match new risk zone colors
-- [ ] Test color accessibility and contrast ratios
-- [ ] Document color coding standards for future development
+- [x] Ensure consistent color usage across components
 
-### Algorithm Testing & Validation
-- [ ] Create test cases with known high-risk areas (near bayous, low elevation)
-- [ ] Validate that risk distribution shows variation (not all moderate)
-- [ ] Test edge cases: extreme rainfall values, completely flat areas
-- [ ] Compare algorithm results with manual/visual risk assessment
-- [ ] Create algorithm performance benchmarks
-- [ ] Document algorithm improvements and mathematical reasoning
-
-### Backend API Enhancements
-- [ ] Update simulation endpoint to return enhanced risk data
-- [ ] Add slope and proximity data to coordinate lookup endpoints
-- [ ] Implement caching for slope calculations (computationally expensive)
-- [ ] Add validation for new risk calculation parameters
-- [ ] Update API documentation for new data fields
-- [ ] Test API performance with enhanced calculations
+### **SKIP FOR HACKATHON (Post-Demo Tasks)**
+- [ ] ~~Advanced Zone Visualization (Voronoi)~~ - Too complex for deadline
+- [ ] ~~Algorithm Testing & Validation~~ - Works already, test later
+- [ ] ~~Backend API Enhancements~~ - Only if heat map requires changes
+- [ ] ~~Performance Optimization~~ - Polish for post-hackathon
 
 ---
 
 ## Milestone 5: WhiteboxTools Integration (Phase 2A)
 
 ### WhiteboxTools Setup
-- [ ] Create WhiteboxService class for tool integration
-- [ ] Implement flow accumulation calculation
-- [ ] Add slope calculation from DEM data (replace basic version)
-- [ ] Integrate watershed analysis
-- [ ] Add flow length calculations
-- [ ] Test individual tools with sample DEM data
+- [x] Create WhiteboxService class for tool integration
+- [x] Implement flow accumulation calculation
+- [x] Add slope calculation from DEM data (replace basic version)
+- [x] Integrate watershed analysis
+- [x] Add flow length calculations
+- [x] Test individual tools with sample DEM data
 
 ### Advanced Risk Processing
-- [ ] Replace enhanced calculation with full hydrological analysis
-- [ ] Implement drainage coefficient calculation from slope and flow accumulation
-- [ ] Add flow accumulation to risk assessment formula
-- [ ] Integrate watershed boundaries into risk zones
-- [ ] Create composite risk score from multiple hydrological factors
+- [x] Replace enhanced calculation with full hydrological analysis
+- [x] Implement drainage coefficient calculation from slope and flow accumulation
+- [x] Add flow accumulation to risk assessment formula
+- [x] Integrate watershed boundaries into risk zones
+- [x] Create composite risk score from multiple hydrological factors
 - [ ] Validate results against known flood-prone areas
 
 ### Performance Optimization
-- [ ] Implement DEM data caching for WhiteboxTools
-- [ ] Add processing result caching for expensive calculations
-- [ ] Optimize WhiteboxTools parameter tuning
-- [ ] Add parallel processing for large datasets
-- [ ] Monitor memory usage during processing
-- [ ] Achieve < 10 second processing target
+- [x] Implement DEM data caching for WhiteboxTools
+- [x] Add processing result caching for expensive calculations
+- [x] Optimize WhiteboxTools parameter tuning
+- [x] Add parallel processing for large datasets
+- [x] Monitor memory usage during processing
+- [x] Achieve < 10 second processing target
 
 ---
 
@@ -388,13 +386,28 @@
 
 ## Immediate Action Items (Next Session Priority)
 
-1. **Enhanced Risk Algorithm** - Fix the "all moderate" distribution issue
-2. **Risk Zone Visualization** - Replace equally-spaced markers with area-based zones
-3. **Complete Popup Data** - Restore elevation, coordinates, and risk score display
-4. **Color Standardization** - Ensure red/yellow/green coding works consistently
+1. **Intelligent Sampling Strategy** - Replace uniform grid with topography-based sampling (Phase 1)
+2. **Heat Map Implementation** - Quick professional visualization upgrade (Phase 3)  
+3. **Interactive Heat Map** - Maintain coordinate inspection functionality (Phase 4)
+4. **Complete Testing & Validation** - Validate new approach works correctly
+
+### Current Status Summary:
+✅ **Enhanced Risk Algorithm** - Multi-factor calculations implemented and working
+✅ **Enhanced Popup Display** - Complete data display with proper formatting
+✅ **Color Standardization** - Consistent color scheme implemented
+✅ **Heat Map Visualization** - Professional heat map zones implemented
+✅ **WhiteboxTools Integration** - Advanced hydrological analysis with flow accumulation, slope, and watersheds
+✅ **Marker Color Fix** - Proper color mapping (red/yellow/green) based on risk levels
+🔄 **Next Focus** - Validate WhiteboxTools results and continue with Milestone 6
+
+### Implementation Order for Maximum Impact:
+**Phase 1**: Fix sampling strategy (immediate visual improvement) - **NEXT PRIORITY**
+**Phase 3**: Implement heat map zones (professional appearance)  
+**Phase 4**: Interactive features (maintain existing functionality)
+**Phase 5**: Advanced zones (future enhancement)
 
 ---
 
-**Current Focus**: Milestone 4.6 - Risk Visualization & Algorithm Improvements (PRIORITY)
-**Next Priority**: Enhanced risk calculation algorithm and risk zone implementation
-**Last Updated**: September 21, 2025
+**Current Focus**: Milestone 5 - WhiteboxTools Integration (COMPLETED)
+**Next Priority**: Milestone 6 - Spatial Clustering & Optimization
+**Last Updated**: September 21, 2025 - WhiteboxTools integration complete with advanced hydrological analysis

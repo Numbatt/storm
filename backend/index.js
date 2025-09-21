@@ -5,6 +5,7 @@ const path = require('path');
 const DEMService = require('./services/demService');
 const RiskProcessor = require('./services/riskProcessor');
 const FloodAnalysisService = require('./services/floodAnalysisService');
+const { router: debugRouter, setServices } = require('./routes/debug');
 
 dotenv.config();
 
@@ -27,6 +28,17 @@ try {
   demService = new DEMService();
   riskProcessor = new RiskProcessor(demService);
   floodAnalysisService = new FloodAnalysisService();
+
+  // Set up debug routes with service access
+  setServices({
+    demService,
+    riskProcessor,
+    floodAnalysisService
+  });
+
+  // Add debug routes
+  app.use('/api/debug', debugRouter);
+
   console.log('DEM, Risk Processing, and Flood Analysis services initialized successfully');
 } catch (error) {
   console.error('Error initializing services:', error.message);
@@ -278,6 +290,7 @@ app.listen(PORT, () => {
   console.log(`Health check: http://localhost:${PORT}/api/health`);
   console.log(`Flood analysis health: http://localhost:${PORT}/api/flood-analysis/health`);
   console.log(`Available coordinates: http://localhost:${PORT}/api/flood-analysis/coordinates`);
+  console.log(`Debug endpoints: http://localhost:${PORT}/api/debug/algorithm-summary`);
 });
 
 module.exports = app;

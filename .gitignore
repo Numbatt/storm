@@ -35,10 +35,6 @@ backend/api/config_with_keys.yaml
 ehthumbs.db
 Thumbs.db
 
-# DEM data files (too large for git)
-data/*.tif
-data/*.tiff
-
 # Build outputs
 dist/
 build/
