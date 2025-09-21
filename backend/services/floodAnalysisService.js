@@ -3,7 +3,7 @@ const path = require('path');
 
 class FloodAnalysisService {
   constructor() {
-    this.apiPath = path.join(__dirname, '../../api');
+    this.apiPath = path.join(__dirname, '../api');
     this.mainScript = path.join(this.apiPath, 'main.py');
   }
 
