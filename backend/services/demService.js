@@ -117,6 +117,83 @@ class DEMService {
   }
 
   generateSampleGrid(numPoints = 100) {
+    // Use intelligent sampling for better performance and accuracy
+    return this.generateIntelligentSampleGrid(numPoints);
+  }
+
+  generateIntelligentSampleGrid(numPoints = 250) {
+    const bounds = this.convertUTMBoundsToWGS84();
+    const points = [];
+
+    // Stratified sampling strategy:
+    // 70% in low elevation areas (<10m) - flood prone
+    // 20% in medium elevation areas (10-20m) - moderate risk
+    // 10% in high elevation areas (>20m) - lower risk
+    const lowElevPoints = Math.floor(numPoints * 0.7);
+    const medElevPoints = Math.floor(numPoints * 0.2);
+    const highElevPoints = numPoints - lowElevPoints - medElevPoints;
+
+    console.log(`Intelligent sampling: ${lowElevPoints} low, ${medElevPoints} medium, ${highElevPoints} high elevation points`);
+
+    let pointId = 1;
+    const maxAttempts = numPoints * 3; // Prevent infinite loops
+    let attempts = 0;
+
+    // Generate points with elevation-based probability
+    while (points.length < numPoints && attempts < maxAttempts) {
+      attempts++;
+
+      // Random coordinate within bounds
+      const lat = bounds.south + Math.random() * (bounds.north - bounds.south);
+      const lon = bounds.west + Math.random() * (bounds.east - bounds.west);
+
+      const elevation = this.getElevationAt(lon, lat);
+
+      if (elevation !== null) {
+        // Determine target category counts
+        const currentLow = points.filter(p => p.elevation < 10).length;
+        const currentMed = points.filter(p => p.elevation >= 10 && p.elevation < 20).length;
+        const currentHigh = points.filter(p => p.elevation >= 20).length;
+
+        // Accept point based on elevation category and quota
+        let acceptPoint = false;
+
+        if (elevation < 10 && currentLow < lowElevPoints) {
+          // Low elevation - high acceptance rate
+          acceptPoint = Math.random() < 0.8;
+        } else if (elevation >= 10 && elevation < 20 && currentMed < medElevPoints) {
+          // Medium elevation - moderate acceptance rate
+          acceptPoint = Math.random() < 0.6;
+        } else if (elevation >= 20 && currentHigh < highElevPoints) {
+          // High elevation - lower acceptance rate
+          acceptPoint = Math.random() < 0.4;
+        }
+
+        // Add proximity-to-water bias (lower elevation = higher probability)
+        if (acceptPoint) {
+          const proximityBias = Math.max(0.3, (30 - elevation) / 30); // Higher bias for lower elevation
+          acceptPoint = Math.random() < proximityBias;
+        }
+
+        if (acceptPoint) {
+          points.push({
+            id: pointId++,
+            latitude: lat,
+            longitude: lon,
+            elevation: elevation
+          });
+        }
+      }
+    }
+
+    console.log(`Generated ${points.length} intelligent sample points from DEM`);
+    console.log(`Distribution: ${points.filter(p => p.elevation < 10).length} low, ${points.filter(p => p.elevation >= 10 && p.elevation < 20).length} medium, ${points.filter(p => p.elevation >= 20).length} high`);
+
+    return points;
+  }
+
+  // Legacy uniform grid method (kept for comparison/fallback)
+  generateUniformSampleGrid(numPoints = 100) {
     const bounds = this.convertUTMBoundsToWGS84();
     const points = [];
 
@@ -141,7 +218,7 @@ class DEMService {
       }
     }
 
-    console.log(`Generated ${points.length} sample points from DEM`);
+    console.log(`Generated ${points.length} uniform sample points from DEM`);
     return points;
   }
 }
