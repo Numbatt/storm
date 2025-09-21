@@ -5,14 +5,23 @@ const path = require('path');
 const DEMService = require('./services/demService');
 const RiskProcessor = require('./services/riskProcessor');
 const FloodAnalysisService = require('./services/floodAnalysisService');
+const AIInsightsService = require('./services/aiInsightsService');
 
 dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-app.use(cors());
-app.use(express.json());
+// Enhanced CORS configuration
+app.use(cors({
+  origin: ['http://localhost:5173', 'http://localhost:5174', 'http://localhost:5175', 'http://localhost:3000'],
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With']
+}));
+
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
 // Serve static files for segmentation results
 const resultsPath = path.join(__dirname, 'api', 'data', 'results');
@@ -22,12 +31,14 @@ app.use('/static/results', express.static(resultsPath));
 let demService;
 let riskProcessor;
 let floodAnalysisService;
+let aiInsightsService;
 
 try {
   demService = new DEMService();
   riskProcessor = new RiskProcessor(demService);
   floodAnalysisService = new FloodAnalysisService();
-  console.log('DEM, Risk Processing, and Flood Analysis services initialized successfully');
+  aiInsightsService = new AIInsightsService();
+  console.log('DEM, Risk Processing, Flood Analysis, and AI Insights services initialized successfully');
 } catch (error) {
   console.error('Error initializing services:', error.message);
 }
@@ -250,18 +261,58 @@ app.post('/api/flood-analysis/analyze', async (req, res) => {
 
     console.log(`Starting flood analysis for coordinates: ${lat}, ${lon}`);
     
-    // Perform analysis
-    const analysisResult = await floodAnalysisService.analyzeCoordinates(lat, lon, options);
+    // Perform analysis with enhanced error handling
+    let analysisResult;
+    try {
+      analysisResult = await floodAnalysisService.analyzeCoordinates(lat, lon, options);
+      
+      if (!analysisResult) {
+        throw new Error('Analysis returned no data');
+      }
+      
+      console.log('✅ Flood analysis completed successfully');
+    } catch (analysisError) {
+      console.error('❌ Flood analysis failed:', analysisError.message);
+      return res.status(500).json({
+        error: 'Flood analysis failed',
+        details: analysisError.message,
+        coordinates: { lat, lon },
+        timestamp: new Date().toISOString()
+      });
+    }
 
-    res.json({
+    // Generate AI insights if available
+    let aiInsights = null;
+    if (aiInsightsService && aiInsightsService.isAvailable()) {
+      try {
+        console.log('🤖 Generating AI insights...');
+        aiInsights = await aiInsightsService.generateAIInsights(analysisResult);
+        console.log('✅ AI insights generated successfully');
+      } catch (insightError) {
+        console.warn('⚠️ AI insights generation failed:', insightError.message);
+        // Continue without AI insights rather than failing the whole request
+        aiInsights = null;
+      }
+    } else {
+      console.log('ℹ️ AI insights service not available');
+    }
+
+    // Ensure the response has all required fields
+    const response = {
       success: true,
-      analysis: analysisResult,
+      analysis: {
+        ...analysisResult,
+        ai_insights: aiInsights
+      },
       request: {
         coordinates: { lat, lon },
         parameters: options,
         timestamp: new Date().toISOString()
       }
-    });
+    };
+
+    console.log('📤 Sending successful response');
+    res.json(response);
 
   } catch (error) {
     console.error('Flood analysis error:', error);
@@ -273,11 +324,119 @@ app.post('/api/flood-analysis/analyze', async (req, res) => {
   }
 });
 
+// AI Insights endpoints
+app.post('/api/ai-insights/generate', async (req, res) => {
+  const { analysisData } = req.body;
+
+  if (!analysisData) {
+    return res.status(400).json({
+      error: 'Missing required parameter: analysisData'
+    });
+  }
+
+  try {
+    if (!aiInsightsService || !aiInsightsService.isAvailable()) {
+      return res.status(503).json({
+        error: 'AI insights service not available',
+        message: 'OpenAI API key not configured or service unavailable'
+      });
+    }
+
+    const insights = await aiInsightsService.generateAIInsights(analysisData);
+
+    res.json({
+      success: true,
+      ai_insights: insights,
+      timestamp: new Date().toISOString()
+    });
+
+  } catch (error) {
+    console.error('AI insights generation error:', error);
+    res.status(500).json({
+      error: 'Failed to generate AI insights',
+      details: error.message
+    });
+  }
+});
+
+app.post('/api/ai-insights/dynamic', async (req, res) => {
+  const { baseAnalysis, rainfall } = req.body;
+
+  if (!baseAnalysis || typeof rainfall !== 'number') {
+    return res.status(400).json({
+      error: 'Missing required parameters: baseAnalysis and rainfall (number)'
+    });
+  }
+
+  if (rainfall < 0 || rainfall > 500) {
+    return res.status(400).json({
+      error: 'Invalid rainfall: must be between 0 and 500 mm'
+    });
+  }
+
+  try {
+    if (!aiInsightsService || !aiInsightsService.isAvailable()) {
+      return res.status(503).json({
+        error: 'AI insights service not available',
+        message: 'OpenAI API key not configured or service unavailable'
+      });
+    }
+
+    const dynamicInsights = await aiInsightsService.generateDynamicInsights(baseAnalysis, rainfall);
+
+    res.json({
+      success: true,
+      ai_insights: dynamicInsights,
+      rainfall_mm: rainfall,
+      timestamp: new Date().toISOString()
+    });
+
+  } catch (error) {
+    console.error('Dynamic AI insights generation error:', error);
+    res.status(500).json({
+      error: 'Failed to generate dynamic AI insights',
+      details: error.message
+    });
+  }
+});
+
+app.get('/api/ai-insights/health', (req, res) => {
+  const isAvailable = aiInsightsService && aiInsightsService.isAvailable();
+  
+  res.json({
+    status: isAvailable ? 'available' : 'unavailable',
+    service: 'AI Insights (GPT-4o-mini)',
+    openai_configured: !!process.env.OPENAI_API_KEY,
+    timestamp: new Date().toISOString()
+  });
+});
+
+// Global error handler
+app.use((error, req, res, next) => {
+  console.error('❌ Unhandled error:', error);
+  res.status(500).json({
+    error: 'Internal server error',
+    message: process.env.NODE_ENV === 'production' ? 'Something went wrong' : error.message,
+    timestamp: new Date().toISOString()
+  });
+});
+
+// 404 handler
+app.use((req, res) => {
+  res.status(404).json({
+    error: 'Not found',
+    message: `Route ${req.method} ${req.path} not found`,
+    timestamp: new Date().toISOString()
+  });
+});
+
 app.listen(PORT, () => {
-  console.log(`Fifth Ward Flood Simulation API running on port ${PORT}`);
-  console.log(`Health check: http://localhost:${PORT}/api/health`);
-  console.log(`Flood analysis health: http://localhost:${PORT}/api/flood-analysis/health`);
-  console.log(`Available coordinates: http://localhost:${PORT}/api/flood-analysis/coordinates`);
+  console.log(`🚀 Fifth Ward Flood Simulation API running on port ${PORT}`);
+  console.log(`📊 Health check: http://localhost:${PORT}/api/health`);
+  console.log(`🌊 Flood analysis health: http://localhost:${PORT}/api/flood-analysis/health`);
+  console.log(`🤖 AI insights health: http://localhost:${PORT}/api/ai-insights/health`);
+  console.log(`📍 Available coordinates: http://localhost:${PORT}/api/flood-analysis/coordinates`);
+  console.log(`📁 Static files: http://localhost:${PORT}/static/results/`);
 });
 
 module.exports = app;

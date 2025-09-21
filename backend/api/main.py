@@ -29,6 +29,11 @@ from data_fetch.streetview import StreetViewFetcher
 from vision.mask2former_detector import Mask2FormerDetector
 from scoring.flood_score import FloodRiskScorer
 from recommend.recommender import FloodMitigationRecommender
+try:
+    from ai_insights.ai_insights_generator import AIInsightsGenerator
+except ImportError as e:
+    print(f"Warning: AI insights module not available: {e}")
+    AIInsightsGenerator = None
 
 
 def analyze_flood_risk(lat: float, lon: float, rainfall: float = 25.0, 
@@ -59,12 +64,14 @@ def analyze_flood_risk(lat: float, lon: float, rainfall: float = 25.0,
             surface_detector = Mask2FormerDetector(config_path, debug=debug)
             risk_scorer = FloodRiskScorer(config_path)
             recommender = FloodMitigationRecommender()
+            ai_insights_generator = AIInsightsGenerator() if AIInsightsGenerator else None
     else:
         elevation_fetcher = ElevationFetcher(config_path)
         weather_fetcher = WeatherFetcher(config_path)
         surface_detector = Mask2FormerDetector(config_path, debug=debug)
         risk_scorer = FloodRiskScorer(config_path)
         recommender = FloodMitigationRecommender()
+        ai_insights_generator = AIInsightsGenerator() if AIInsightsGenerator else None
     
     # Check for existing images
     data_dir = os.path.join(os.path.dirname(__file__), "data", "processed")
@@ -220,6 +227,29 @@ def analyze_flood_risk(lat: float, lon: float, rainfall: float = 25.0,
         'images': images_list,
         'timestamp': datetime.now().isoformat()
     }
+    
+    # Step 6: Generate AI insights
+    if not debug and not json_mode:
+        print("🤖 Generating AI insights...")
+    
+    # Step 6: Generate AI insights (if available)
+    try:
+        if ai_insights_generator:
+            if json_mode:
+                with redirect_stdout(StringIO()):
+                    ai_insights = ai_insights_generator.generate_ai_insights(results)
+            else:
+                ai_insights = ai_insights_generator.generate_ai_insights(results)
+            results['ai_insights'] = ai_insights
+        else:
+            results['ai_insights'] = None
+            if not json_mode:
+                print("⚠️ Warning: AI insights generator not available")
+        
+    except Exception as e:
+        if not json_mode:
+            print(f"⚠️ Warning: AI insights generation failed: {e}")
+        results['ai_insights'] = None
     
     return results
 
