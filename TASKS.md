@@ -95,28 +95,54 @@
 ## Milestone 4: Map Visualization & Markers (Phase 1D)
 
 ### Risk Marker System
-- [ ] Create RiskMarker component for individual markers
-- [ ] Implement color coding (Red=High, Yellow=Moderate, Green=Low)
-- [ ] Add marker clustering to prevent overlap
-- [ ] Create MarkerCluster component with Leaflet clustering
-- [ ] Implement minimum distance logic (100m between same-risk markers)
-- [ ] Add marker tooltips with basic risk information
+- [x] Create RiskMarker component for individual markers
+- [x] Implement color coding (Red=High, Yellow=Moderate, Green=Low)
+- [x] Add marker clustering to prevent overlap
+- [x] Create MarkerCluster component with Leaflet clustering
+- [x] Implement minimum distance logic (100m between same-risk markers)
+- [x] Add marker tooltips with basic risk information
 
 ### Map Integration
-- [ ] Connect simulation API to map marker display
-- [ ] Implement loading states during simulation processing
-- [ ] Add error handling for failed simulations
-- [ ] Create risk legend component
-- [ ] Add simulation results overlay on map
-- [ ] Test end-to-end simulation workflow
+- [x] Connect simulation API to map marker display
+- [x] Implement loading states during simulation processing
+- [x] Add error handling for failed simulations
+- [x] Create risk legend component
+- [x] Add simulation results overlay on map
+- [x] Test end-to-end simulation workflow
 
 ### User Experience
-- [ ] Add simulation progress indicators
-- [ ] Implement result clearing between simulations
-- [ ] Add success/error notification system
-- [ ] Create help text for slider controls
-- [ ] Implement responsive marker sizing
-- [ ] Test usability with different parameter combinations
+- [x] Add simulation progress indicators
+- [x] Implement result clearing between simulations
+- [x] Create help text for slider controls
+- [x] Implement responsive marker sizing
+
+---
+
+## Milestone 4.5: Interactive Coordinate Inspection (Phase 1E)
+
+### Coordinate Inspection Features
+- [x] Create CoordinateInspector overlay component
+- [x] Implement Shift+hover event handling for coordinate display
+- [x] Add real-time coordinate display with lat/lng
+- [x] Integrate elevation data fetching from backend
+- [x] Add flood risk data lookup for hovered coordinates
+- [x] Style coordinate tooltip with proper positioning
+
+### Risk Assessment Interaction
+- [x] Implement Shift+click event handling
+- [x] Create RiskAssessmentPopup component
+- [x] Add "Perform Risk Assessment" button to popup
+- [x] Implement console.log functionality for risk assessment button
+- [x] Style risk assessment popup window
+- [x] Add popup positioning and close functionality
+
+### Integration & Testing
+- [x] Integrate coordinate inspection with existing map
+- [x] Test Shift+hover coordinate display accuracy
+- [x] Test Shift+click risk assessment popup
+- [x] Ensure proper event handling and cleanup
+- [x] Test accessibility and usability
+- [ ] Document coordinate inspection features
 
 ---
 
@@ -157,14 +183,6 @@
 - [ ] Implement radius-based risk zone analysis
 - [ ] Add cluster size optimization based on zoom level
 - [ ] Test clustering with various density scenarios
-
-### Map Performance
-- [ ] Optimize marker rendering for 100+ markers
-- [ ] Implement marker virtualization for large datasets
-- [ ] Add progressive loading for detailed risk data
-- [ ] Optimize map tile loading and caching
-- [ ] Implement smooth zoom and pan performance
-- [ ] Test performance on various devices
 
 ### Data Validation
 - [ ] Compare results with historical flood data

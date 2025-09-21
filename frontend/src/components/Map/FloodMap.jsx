@@ -3,6 +3,8 @@ import { useSelector } from 'react-redux'
 import { useTheme } from '../../contexts/ThemeContext'
 import { selectResults, selectLoading } from '../../store/slices/simulationSlice'
 import MarkerCluster from './MarkerCluster'
+import CoordinateInspector from './CoordinateInspector'
+import RiskAssessmentPopup from './RiskAssessmentPopup'
 import 'leaflet/dist/leaflet.css'
 
 const FloodMap = () => {
@@ -12,10 +14,6 @@ const FloodMap = () => {
   
   // Fifth Ward Houston coordinates
   const fifthWardCenter = [29.760, -95.365]
-  const fifthWardBounds = [
-    [29.745, -95.380], // Southwest corner
-    [29.775, -95.350]  // Northeast corner
-  ]
 
   // Dark theme tile layer (CartoDB Dark)
   const darkTileLayer = {
@@ -62,6 +60,10 @@ const FloodMap = () => {
         {results && results.length > 0 && (
           <MarkerCluster markers={results} />
         )}
+
+        {/* Coordinate Inspection Features */}
+        <CoordinateInspector />
+        <RiskAssessmentPopup />
       </MapContainer>
 
       {/* Loading overlay */}

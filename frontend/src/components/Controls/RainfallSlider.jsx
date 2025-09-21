@@ -18,11 +18,21 @@ const RainfallSlider = ({ min = 0, max = 20, step = 0.1 }) => {
       transition={{ delay: 0.6 }}
       className="relative"
     >
-      <label className="block text-sm font-medium text-gray-300 dark:text-gray-300 light:text-gray-700 mb-4 flex items-center">
-        <svg className="w-4 h-4 mr-2 text-[#51A3F0]" fill="currentColor" viewBox="0 0 20 20">
-          <path d="M10 2L3 7v11a1 1 0 001 1h12a1 1 0 001-1V7l-7-5zM8 15v-3a2 2 0 114 0v3H8z" />
-        </svg>
-        Rainfall Amount
+      <label className="block text-sm font-medium text-gray-300 dark:text-gray-300 light:text-gray-700 mb-4 flex items-center justify-between">
+        <div className="flex items-center">
+          <svg className="w-4 h-4 mr-2 text-[#51A3F0]" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M10 2L3 7v11a1 1 0 001 1h12a1 1 0 001-1V7l-7-5zM8 15v-3a2 2 0 114 0v3H8z" />
+          </svg>
+          Rainfall Amount
+        </div>
+        <div className="group relative">
+          <svg className="w-4 h-4 text-gray-500 hover:text-gray-300 cursor-help" fill="currentColor" viewBox="0 0 20 20">
+            <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+          </svg>
+          <div className="absolute bottom-full right-0 mb-2 hidden group-hover:block w-64 p-2 bg-gray-900 text-white text-xs rounded-lg shadow-lg z-10">
+            Set the total amount of rainfall for the flood simulation. Higher values increase flood risk. Typical range: 1-10 inches for normal storms, 10+ for severe weather.
+          </div>
+        </div>
       </label>
 
       <div className="mb-4">

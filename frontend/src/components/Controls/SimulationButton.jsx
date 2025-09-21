@@ -1,6 +1,6 @@
 import { useSelector, useDispatch } from 'react-redux'
 import { motion } from 'framer-motion'
-import { selectLoading, runSimulation } from '../../store/slices/simulationSlice'
+import { selectLoading, selectProgressStage, runSimulation } from '../../store/slices/simulationSlice'
 
 const SimulationButton = ({
   disabled = false,
@@ -8,6 +8,7 @@ const SimulationButton = ({
 }) => {
   const dispatch = useDispatch()
   const loading = useSelector(selectLoading)
+  const progressStage = useSelector(selectProgressStage)
 
   const handleClick = () => {
     dispatch(runSimulation())
@@ -61,9 +62,16 @@ const SimulationButton = ({
           </motion.svg>
         )}
 
-        <span className="text-lg tracking-wide">
-          {loading ? 'Running Simulation...' : children}
-        </span>
+        <div className="flex flex-col items-center">
+          <span className="text-lg tracking-wide">
+            {loading ? 'Running Simulation...' : children}
+          </span>
+          {loading && progressStage && (
+            <span className="text-xs text-white/80 mt-1">
+              {progressStage}
+            </span>
+          )}
+        </div>
       </div>
     </motion.button>
   )

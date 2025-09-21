@@ -8,6 +8,7 @@ const initialState = {
   // Simulation state
   loading: false,
   error: null,
+  progressStage: null,
 
   // Results
   results: null,
@@ -45,7 +46,13 @@ const simulationSlice = createSlice({
       state.loading = action.payload
       if (action.payload) {
         state.error = null
+      } else {
+        state.progressStage = null
       }
+    },
+
+    setProgressStage: (state, action) => {
+      state.progressStage = action.payload
     },
 
     setResults: (state, action) => {
@@ -78,6 +85,7 @@ export const {
   setRainfall,
   setDuration,
   setLoading,
+  setProgressStage,
   setResults,
   setError,
   clearResults,
@@ -88,6 +96,7 @@ export const {
 export const selectRainfall = (state) => state.simulation.rainfall
 export const selectDuration = (state) => state.simulation.duration
 export const selectLoading = (state) => state.simulation.loading
+export const selectProgressStage = (state) => state.simulation.progressStage
 export const selectError = (state) => state.simulation.error
 export const selectResults = (state) => state.simulation.results
 export const selectStatistics = (state) => state.simulation.statistics
@@ -98,8 +107,11 @@ export const runSimulation = () => async (dispatch, getState) => {
   const { rainfall, duration } = getState().simulation
 
   dispatch(setLoading(true))
+  dispatch(setProgressStage('Initializing simulation...'))
 
   try {
+    dispatch(setProgressStage('Loading elevation data...'))
+
     const response = await fetch('/api/simulation', {
       method: 'POST',
       headers: {
@@ -108,12 +120,17 @@ export const runSimulation = () => async (dispatch, getState) => {
       body: JSON.stringify({ rainfall, duration }),
     })
 
+    dispatch(setProgressStage('Processing risk calculations...'))
+
     if (!response.ok) {
       const errorData = await response.json()
       throw new Error(errorData.error || 'Simulation failed')
     }
 
+    dispatch(setProgressStage('Generating map markers...'))
     const data = await response.json()
+
+    dispatch(setProgressStage('Finalizing results...'))
     dispatch(setResults(data))
 
   } catch (error) {
