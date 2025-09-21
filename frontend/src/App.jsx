@@ -12,6 +12,7 @@ import LandingPage from './components/Hero/LandingPage'
 import ThemeToggle from './components/ThemeToggle'
 import RiskAnalysis from './pages/RiskAnalysis'
 import StormAnalysis from './pages/StormAnalysis'
+import { LocationProvider, useLocation } from './contexts/LocationContext'
 
 function App() {
   const [showLandingPage, setShowLandingPage] = useState(true)
@@ -33,20 +34,22 @@ function App() {
   }
 
   return (
-    <Routes>
-      <Route path="/" element={
-        <AppContent 
-          rainfall={rainfall}
-          duration={duration}
-          loading={loading}
-          error={error}
-          results={results}
-          statistics={statistics}
-        />
-      } />
-      <Route path="/analysis" element={<RiskAnalysis />} />
-      <Route path="/analysis-storm" element={<StormAnalysis />} />
-    </Routes>
+    <LocationProvider>
+      <Routes>
+        <Route path="/" element={
+          <AppContent 
+            rainfall={rainfall}
+            duration={duration}
+            loading={loading}
+            error={error}
+            results={results}
+            statistics={statistics}
+          />
+        } />
+        <Route path="/analysis" element={<RiskAnalysis />} />
+        <Route path="/analysis-storm" element={<StormAnalysis />} />
+      </Routes>
+    </LocationProvider>
   )
 }
 
@@ -59,6 +62,8 @@ const AppContent = ({ rainfall, duration, loading, error, results, statistics })
     }
     return false
   })
+  
+  const { currentLocation, isLoading: locationLoading } = useLocation()
 
   // Check if device is mobile on mount and resize
   useEffect(() => {
@@ -82,17 +87,23 @@ const AppContent = ({ rainfall, duration, loading, error, results, statistics })
 
   return (
     <div className="h-screen w-screen bg-gradient-to-br from-gray-900 via-black to-gray-800 dark:from-gray-900 dark:via-black dark:to-gray-800 light:from-gray-50 light:via-white light:to-gray-100 text-white dark:text-white light:text-gray-900 overflow-hidden flex flex-col">
-      {/* Header */}
+      {/* Header - Always on top with highest z-index */}
       <motion.header 
         initial={{ y: -50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.4, ease: "easeOut" }}
-        className="relative z-30 bg-black/20 dark:bg-black/20 light:bg-white/80 backdrop-blur-md border-b border-white/10 dark:border-white/10 light:border-gray-200 p-4"
+        className="fixed top-0 left-0 w-full z-[60] bg-black dark:bg-black light:bg-white border-b border-white/10 dark:border-white/10 light:border-gray-200 p-4"
       >
         <div className="flex items-center justify-between max-w-7xl mx-auto">
           <div>
-            <h1 className="text-2xl font-light tracking-wide">
-              <span className="text-white dark:text-white light:text-gray-900">Fifth Ward </span>
+            <h1 className="text-2xl font-light tracking-wide flex items-center">
+              <svg 
+                className="w-6 h-6 mr-2 text-[#51A3F0] dark:text-[#51A3F0] light:text-[#51A3F0]" 
+                fill="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path d="M11 21h-1l1-7H7.5c-.88 0-.33-.75-.31-.78C8.48 10.94 10.42 7.54 13.01 3h1.05L13 10h3.5c.49 0 .56.75.47.8C15.49 13.06 13.51 16.46 11 21z"/>
+              </svg>
               <span 
                 className="italic bg-gradient-to-r from-[#51A3F0] via-[#99CBF7] to-[#E0F1FF] bg-clip-text text-transparent"
                 style={{ fontFamily: 'Georgia, serif' }}
@@ -100,13 +111,28 @@ const AppContent = ({ rainfall, duration, loading, error, results, statistics })
                 Storm
               </span>
             </h1>
-            <p className="text-sm text-gray-300 dark:text-gray-300 light:text-gray-600 mt-1">Houston, Texas - Interactive Flood Risk Assessment</p>
+            <motion.p 
+              className="text-sm text-gray-300 dark:text-gray-300 light:text-gray-600 mt-1"
+              key={currentLocation.fullName}
+              initial={{ opacity: 0.7 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.3 }}
+            >
+              {locationLoading ? (
+                <span className="flex items-center">
+                  <div className="w-3 h-3 border border-gray-400 border-t-transparent rounded-full animate-spin mr-2"></div>
+                  Detecting location...
+                </span>
+              ) : (
+                `${currentLocation.fullName} - Interactive Flood Risk Assessment`
+              )}
+            </motion.p>
           </div>
           
           <div className="flex items-center space-x-3">
             <Link 
               to="/analysis-storm" 
-              className="px-4 py-2 bg-gradient-to-r from-[#7dd3ff] to-[#60a5fa] text-gray-900 rounded-lg hover:from-[#60a5fa] hover:to-[#7dd3ff] transition-all duration-300 text-sm font-bold flex items-center space-x-2"
+              className="px-4 py-2 bg-gradient-to-r from-[#7dd3ff] to-[#60a5fa] dark:from-[#7dd3ff] dark:to-[#60a5fa] light:from-[#7dd3ff] light:to-[#60a5fa] text-gray-900 dark:text-gray-900 light:text-gray-900 rounded-lg hover:from-[#60a5fa] hover:to-[#7dd3ff] dark:hover:from-[#60a5fa] dark:hover:to-[#7dd3ff] light:hover:from-[#60a5fa] light:hover:to-[#7dd3ff] transition-all duration-300 text-sm font-bold flex items-center space-x-2"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
@@ -118,14 +144,14 @@ const AppContent = ({ rainfall, duration, loading, error, results, statistics })
         </div>
       </motion.header>
 
-      {/* Main Content */}
-      <main className="flex-1 relative min-h-0">
-        {/* Map Area - Always Fullscreen */}
+      {/* Main Content - Account for fixed header */}
+      <main className="flex-1 relative min-h-0 pt-20">
+        {/* Map Area - Always Fullscreen (100vw x 100vh) */}
         <motion.div 
           initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
-          className="absolute inset-0 z-10"
+          className="fixed inset-0 w-screen h-screen z-0"
         >
           <FloodMap />
           
@@ -133,10 +159,10 @@ const AppContent = ({ rainfall, duration, loading, error, results, statistics })
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-black/10 pointer-events-none z-0" />
         </motion.div>
 
-        {/* Persistent Toggle Button */}
+        {/* Persistent Toggle Button - Below header */}
         <motion.button
           onClick={toggleCollapse}
-          className={`fixed top-1/2 -translate-y-1/2 z-50 bg-gradient-to-r from-[#51A3F0] to-[#99CBF7] hover:from-[#4A96E6] hover:to-[#8BC4F5] text-white shadow-lg border-0 ${
+          className={`fixed top-1/2 -translate-y-1/2 z-50 bg-gradient-to-r from-[#51A3F0] to-[#99CBF7] dark:from-[#51A3F0] dark:to-[#99CBF7] light:from-[#51A3F0] light:to-[#99CBF7] hover:from-[#4A96E6] hover:to-[#8BC4F5] dark:hover:from-[#4A96E6] dark:hover:to-[#8BC4F5] light:hover:from-[#4A96E6] light:hover:to-[#8BC4F5] text-white dark:text-white light:text-white shadow-lg border-0 ${
             isCollapsed 
               ? 'right-0 rounded-l-lg px-3 py-4' 
               : 'right-80 rounded-r-lg px-3 py-3'
@@ -156,7 +182,7 @@ const AppContent = ({ rainfall, duration, loading, error, results, statistics })
         >
           <svg 
             className={`w-5 h-5 transition-transform duration-150 ease-out ${
-              isCollapsed ? '' : 'rotate-180'
+              isCollapsed ? 'rotate-180' : ''
             }`} 
             fill="none" 
             stroke="currentColor" 
@@ -179,7 +205,7 @@ const AppContent = ({ rainfall, duration, loading, error, results, statistics })
                 damping: 30,
                 mass: 0.8
               }}
-              className="fixed right-0 top-0 h-full w-80 bg-black/40 dark:bg-black/40 light:bg-white/90 backdrop-blur-xl border-l border-white/10 dark:border-white/10 light:border-gray-200 overflow-y-auto z-40"
+              className="fixed right-0 top-20 h-[calc(100vh-5rem)] w-80 bg-black/40 dark:bg-black/40 light:bg-white/90 backdrop-blur-xl border-l border-white/10 dark:border-white/10 light:border-gray-200 overflow-y-auto z-40"
             >
               {/* Panel Header with Collapse Button */}
               <div className="flex items-center justify-between p-6 pb-4 border-b border-white/10 dark:border-white/10 light:border-gray-200">

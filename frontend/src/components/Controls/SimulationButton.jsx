@@ -1,5 +1,6 @@
 import { useSelector, useDispatch } from 'react-redux'
 import { motion } from 'framer-motion'
+import { useState, useRef } from 'react'
 import { selectLoading, selectProgressStage, runSimulation } from '../../store/slices/simulationSlice'
 
 const SimulationButton = ({
@@ -9,37 +10,72 @@ const SimulationButton = ({
   const dispatch = useDispatch()
   const loading = useSelector(selectLoading)
   const progressStage = useSelector(selectProgressStage)
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
+  const [isHovered, setIsHovered] = useState(false)
+  const buttonRef = useRef(null)
 
   const handleClick = () => {
     dispatch(runSimulation())
   }
+
+  const handleMouseMove = (e) => {
+    if (!buttonRef.current) return
+    
+    const rect = buttonRef.current.getBoundingClientRect()
+    const x = e.clientX - rect.left
+    const y = e.clientY - rect.top
+    
+    setMousePosition({ x, y })
+  }
+
+  const handleMouseEnter = () => {
+    setIsHovered(true)
+  }
+
+  const handleMouseLeave = () => {
+    setIsHovered(false)
+  }
+
   return (
     <motion.button
+      ref={buttonRef}
       onClick={handleClick}
       disabled={disabled || loading}
       initial={{ y: 20, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ delay: 1 }}
-      whileHover={!loading && !disabled ? { scale: 1.02 } : {}}
-      whileTap={!loading && !disabled ? { scale: 0.98 } : {}}
+      whileHover={!loading && !disabled ? { scale: 1.05 } : {}}
+      whileTap={!loading && !disabled ? { scale: 0.95 } : {}}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       className={`
-        relative w-full py-4 px-6 rounded-xl font-light text-white transition-all duration-300
-        overflow-hidden group
+        relative w-full px-8 py-4 rounded-lg transition-all duration-300 overflow-hidden
         ${loading || disabled
-          ? 'bg-gray-600/50 cursor-not-allowed'
-          : 'bg-gradient-to-r from-[#51A3F0] to-[#99CBF7] hover:from-[#4A9AE8] hover:to-[#8BC3F0] shadow-lg hover:shadow-xl hover:shadow-[#51A3F0]/25'
+          ? 'bg-gray-600/50 dark:bg-gray-600/50 light:bg-gray-400/50 cursor-not-allowed border-2 border-gray-600 dark:border-gray-600 light:border-gray-400'
+          : 'gradient-border-button bg-black dark:bg-black light:bg-white hover:bg-black dark:hover:bg-black light:hover:bg-gray-50'
         }
       `}
     >
-      {/* Animated background */}
-      {!loading && !disabled && (
-        <div className="absolute inset-0 bg-gradient-to-r from-[#74B5F2] to-[#E0F1FF] opacity-0 group-hover:opacity-20 transition-opacity duration-300" />
+      {/* Cursor-following glow effect - masked inside button */}
+      {!loading && !disabled && isHovered && (
+        <div
+          className="cursor-glow"
+          style={{
+            left: mousePosition.x - 75,
+            top: mousePosition.y - 75,
+            width: '150px',
+            height: '150px',
+            opacity: isHovered ? 1 : 0
+          }}
+        />
       )}
       
-      <div className="relative flex items-center justify-center">
+      {/* Button content - no blocking background */}
+      <div className="relative z-10 flex items-center justify-center">
         {loading && (
           <motion.svg
-            className="mr-3 h-5 w-5 text-white"
+            className="mr-3 h-5 w-5 text-white dark:text-white light:text-gray-900"
             xmlns="http://www.w3.org/2000/svg"
             fill="none"
             viewBox="0 0 24 24"
@@ -63,11 +99,11 @@ const SimulationButton = ({
         )}
 
         <div className="flex flex-col items-center">
-          <span className="text-lg tracking-wide">
+          <span className="text-white dark:text-white light:text-gray-900 text-lg tracking-wide font-medium">
             {loading ? 'Running Simulation...' : children}
           </span>
           {loading && progressStage && (
-            <span className="text-xs text-white/80 mt-1">
+            <span className="text-xs text-white/80 dark:text-white/80 light:text-gray-700 mt-1">
               {progressStage}
             </span>
           )}

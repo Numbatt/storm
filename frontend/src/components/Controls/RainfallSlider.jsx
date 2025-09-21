@@ -11,29 +11,55 @@ const RainfallSlider = ({ min = 0, max = 20, step = 0.1 }) => {
     dispatch(setRainfall(newValue))
   }
 
-  // Calculate dynamic gradient based on value
+  // Real-time input handler for immediate updates
+  const handleInput = (e) => {
+    const newValue = parseFloat(e.target.value)
+    dispatch(setRainfall(newValue))
+  }
+
+  // Enhanced smooth gradient: Light Blue -> Medium Blue -> Deep Blue -> Purple -> Dark Red
   const getGradientColor = (val) => {
     const percentage = (val - min) / (max - min)
     
-    if (percentage <= 0.33) {
-      // Light Blue to Royal Purple (0-33%)
-      const localPercent = percentage / 0.33
-      return `linear-gradient(to right, #6ECFFF ${localPercent * 100}%, #6A0DAD 100%)`
-    } else if (percentage <= 0.66) {
-      // Royal Purple to Orange (33-66%)
-      const localPercent = (percentage - 0.33) / 0.33
-      return `linear-gradient(to right, #6ECFFF 0%, #6A0DAD ${localPercent * 100}%, #FF8C42 100%)`
-    } else {
-      // Orange dominant (66-100%)
-      const localPercent = (percentage - 0.66) / 0.34
-      return `linear-gradient(to right, #6ECFFF 0%, #6A0DAD 50%, #FF8C42 ${50 + localPercent * 50}%)`
-    }
+    // Define color palette for rainfall intensity
+    const colors = [
+      { stop: 0, color: '#87CEEB' },    // Light sky blue (0-1")
+      { stop: 0.15, color: '#4FC3F7' }, // Light blue (1-3")
+      { stop: 0.35, color: '#2196F3' }, // Medium blue (3-7")
+      { stop: 0.60, color: '#1565C0' }, // Deep blue (7-12")
+      { stop: 0.80, color: '#7B1FA2' }, // Purple (12-16")
+      { stop: 1, color: '#C62828' }     // Dark red (16-20")
+    ]
+    
+    // Create smooth gradient with all color stops
+    const gradientStops = colors.map(({ stop, color }) => 
+      `${color} ${(stop * 100).toFixed(1)}%`
+    ).join(', ')
+    
+    // Create the gradient that fills up to current value
+    const fillPercentage = (percentage * 100).toFixed(1)
+    
+    return `linear-gradient(to right, ${gradientStops})`
   }
 
   const trackFillStyle = {
     background: getGradientColor(value),
     width: `${((value - min) / (max - min)) * 100}%`,
-    transition: 'background 0.3s ease, width 0.3s ease'
+    transition: 'none',
+    position: 'relative',
+    overflow: 'hidden'
+  }
+
+  // Background gradient for the entire track
+  const trackBackgroundStyle = {
+    background: `linear-gradient(to right, 
+      #87CEEB 0%, 
+      #4FC3F7 15%, 
+      #2196F3 35%, 
+      #1565C0 60%, 
+      #7B1FA2 80%, 
+      #C62828 100%)`,
+    opacity: 0.3
   }
 
   return (
@@ -51,10 +77,10 @@ const RainfallSlider = ({ min = 0, max = 20, step = 0.1 }) => {
           Rainfall Amount
         </div>
         <div className="group relative">
-          <svg className="w-4 h-4 text-gray-500 hover:text-gray-300 cursor-help" fill="currentColor" viewBox="0 0 20 20">
+          <svg className="w-4 h-4 text-gray-500 dark:text-gray-500 light:text-gray-400 hover:text-gray-300 dark:hover:text-gray-300 light:hover:text-gray-600 cursor-help" fill="currentColor" viewBox="0 0 20 20">
             <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
           </svg>
-          <div className="absolute bottom-full right-0 mb-2 hidden group-hover:block w-64 p-2 bg-gray-900 text-white text-xs rounded-lg shadow-lg z-10">
+          <div className="absolute bottom-full right-0 mb-2 hidden group-hover:block w-64 p-2 bg-gray-900 dark:bg-gray-900 light:bg-white text-white dark:text-white light:text-gray-900 text-xs rounded-lg shadow-lg border-0 dark:border-0 light:border light:border-gray-200 z-10">
             Set the total amount of rainfall for the flood simulation. Higher values increase flood risk. Typical range: 1-10 inches for normal storms, 10+ for severe weather.
           </div>
         </div>
@@ -80,40 +106,47 @@ const RainfallSlider = ({ min = 0, max = 20, step = 0.1 }) => {
           step={step}
           value={value}
           onChange={handleChange}
-          className="w-full h-2 bg-gray-700/50 dark:bg-gray-700/50 light:bg-gray-300 rounded-lg appearance-none cursor-pointer relative z-10
+          onInput={handleInput}
+          className="w-full h-2 bg-gray-700/50 dark:bg-gray-700/50 light:bg-gray-300 rounded-lg appearance-none cursor-pointer rainfall-slider
                      [&::-webkit-slider-runnable-track]:appearance-none
-                     [&::-webkit-slider-runnable-track]:bg-transparent
+                     [&::-webkit-slider-runnable-track]:bg-gray-700/50
+                     [&::-webkit-slider-runnable-track]:dark:bg-gray-700/50
+                     [&::-webkit-slider-runnable-track]:light:bg-gray-300
                      [&::-webkit-slider-runnable-track]:rounded-lg
                      [&::-webkit-slider-runnable-track]:h-2
                      [&::-webkit-slider-thumb]:appearance-none
-                     [&::-webkit-slider-thumb]:h-6
-                     [&::-webkit-slider-thumb]:w-6
+                     [&::-webkit-slider-thumb]:h-7
+                     [&::-webkit-slider-thumb]:w-7
                      [&::-webkit-slider-thumb]:rounded-full
                      [&::-webkit-slider-thumb]:bg-white
                      [&::-webkit-slider-thumb]:cursor-pointer
-                     [&::-webkit-slider-thumb]:shadow-lg
-                     [&::-webkit-slider-thumb]:border-2
-                     [&::-webkit-slider-thumb]:border-gray-400
-                     [&::-webkit-slider-thumb]:relative
-                     [&::-webkit-slider-thumb]:z-20
-                     [&::-moz-range-thumb]:h-6
-                     [&::-moz-range-thumb]:w-6
+                     [&::-webkit-slider-thumb]:shadow-xl
+                     [&::-webkit-slider-thumb]:border-3
+                     [&::-webkit-slider-thumb]:border-blue-400
+                     [&::-webkit-slider-thumb]:transition-none
+                     [&::-webkit-slider-thumb]:duration-0
+                     [&::-moz-range-thumb]:h-7
+                     [&::-moz-range-thumb]:w-7
                      [&::-moz-range-thumb]:rounded-full
                      [&::-moz-range-thumb]:bg-white
                      [&::-moz-range-thumb]:cursor-pointer
-                     [&::-moz-range-thumb]:border-2
-                     [&::-moz-range-thumb]:border-gray-400
+                     [&::-moz-range-thumb]:border-3
+                     [&::-moz-range-thumb]:border-blue-400
                      [&::-moz-range-thumb]:border-none
-                     [&::-moz-range-track]:bg-transparent
+                     [&::-moz-range-thumb]:shadow-xl
+                     [&::-moz-range-track]:bg-gray-700/50
                      [&::-moz-range-track]:rounded-lg
                      [&::-moz-range-track]:h-2"
         />
         
-        {/* Dynamic gradient track fill */}
+        {/* Custom gradient track fill */}
         <div 
-          className="absolute top-0 left-0 h-2 rounded-lg pointer-events-none transition-all duration-300 ease-out"
+          className="absolute top-0 left-0 h-2 rounded-lg pointer-events-none rainfall-gradient-fill"
           style={trackFillStyle}
-        />
+        >
+          {/* Subtle texture overlay */}
+          <div className="absolute inset-0 rounded-lg opacity-30 rainfall-texture"></div>
+        </div>
       </div>
 
       <div className="flex justify-between text-xs text-gray-400 dark:text-gray-400 light:text-gray-600 mt-2">

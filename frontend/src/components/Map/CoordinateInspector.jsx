@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { useMap, useMapEvents } from 'react-leaflet'
 import { useSelector } from 'react-redux'
 import { selectResults } from '../../store/slices/simulationSlice'
+import { useLocation } from '../../contexts/LocationContext'
 
 const CoordinateInspector = () => {
   const [isShiftPressed, setIsShiftPressed] = useState(false)
@@ -14,6 +15,19 @@ const CoordinateInspector = () => {
   const map = useMap()
   const results = useSelector(selectResults)
   const inspectorRef = useRef(null)
+  const { updateLocation } = useLocation()
+  
+  // Throttle location updates to avoid excessive API calls
+  const locationUpdateTimeoutRef = useRef(null)
+  
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (locationUpdateTimeoutRef.current) {
+        clearTimeout(locationUpdateTimeoutRef.current)
+      }
+    }
+  }, [])
 
   // Handle keyboard events for Shift key
   useEffect(() => {
@@ -78,9 +92,21 @@ const CoordinateInspector = () => {
   // Map events for mouse movement and clicks
   useMapEvents({
     mousemove: async (e) => {
+      const { lat, lng } = e.latlng
+      
+      // Always update location for dynamic heading (throttled)
+      if (locationUpdateTimeoutRef.current) {
+        clearTimeout(locationUpdateTimeoutRef.current)
+      }
+      locationUpdateTimeoutRef.current = setTimeout(() => {
+        updateLocation(lat, lng).catch(error => {
+          console.warn('Failed to update location:', error)
+        })
+      }, 300) // Throttle to 300ms to reduce API calls
+      
+      // Show tooltip only when Shift is pressed
       if (!isShiftPressed) return
 
-      const { lat, lng } = e.latlng
       setCoordinates({ lat: lat.toFixed(4), lng: lng.toFixed(4) })
       setMousePosition({ x: e.containerPoint.x, y: e.containerPoint.y })
 
