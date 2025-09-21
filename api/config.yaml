@@ -1,0 +1,36 @@
+# Flood Risk AI Configuration
+api_keys:
+  google_maps_api_key: "AIzaSyDBIzYioWwnuDHi7GwjsN91y3Pvr76tExU"
+  google_street_view: "AIzaSyDBIzYioWwnuDHi7GwjsN91y3Pvr76tExU"
+  google_elevation: "AIzaSyDBIzYioWwnuDHi7GwjsN91y3Pvr76tExU"
+  openweather: "YOUR_OPENWEATHER_API_KEY"
+
+# Alternative free APIs (if Google APIs not available)
+alternative_apis:
+  elevation: "https://api.opentopodata.org/v1/aster30m"  # Free elevation API
+  
+# Flood risk thresholds and weights
+flood_risk:
+  thresholds:
+    low: 30
+    medium: 60
+    high: 100
+  
+  weights:
+    rainfall_weight: 1.0
+    asphalt_weight: 1.0
+    slope_weight: 1.0
+    drain_weight: 10.0
+
+# Surface detection thresholds
+surface_detection:
+  confidence_threshold: 0.5
+  asphalt_classes: ["road", "pavement", "asphalt"]
+  greenery_classes: ["grass", "tree", "plant", "vegetation"]
+  drain_classes: ["manhole", "drain", "gutter"]
+
+# Image processing settings
+image_settings:
+  street_view_size: "640x640"
+  street_view_fov: 90
+  street_view_pitch: 0
