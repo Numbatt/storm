@@ -14,6 +14,8 @@ import os
 import json
 from datetime import datetime
 from dotenv import load_dotenv
+from contextlib import redirect_stdout
+from io import StringIO
 
 # Load environment variables
 load_dotenv()
@@ -23,13 +25,15 @@ sys.path.append(os.path.join(os.path.dirname(__file__), 'src'))
 
 from data_fetch.elevation import ElevationFetcher
 from data_fetch.weather import WeatherFetcher
+from data_fetch.streetview import StreetViewFetcher
 from vision.mask2former_detector import Mask2FormerDetector
 from scoring.flood_score import FloodRiskScorer
 from recommend.recommender import FloodMitigationRecommender
 
 
 def analyze_flood_risk(lat: float, lon: float, rainfall: float = 25.0, 
-                      drains: str = 'unknown', debug: bool = False) -> dict:
+                      drains: str = 'unknown', road_type: str = 'residential street', 
+                      debug: bool = False, json_mode: bool = False) -> dict:
     """
     Complete flood risk analysis pipeline.
     
@@ -38,6 +42,7 @@ def analyze_flood_risk(lat: float, lon: float, rainfall: float = 25.0,
         lon: Longitude coordinate  
         rainfall: Rainfall amount in mm
         drains: Drainage condition ('ok', 'none', 'unknown')
+        road_type: Type of road/location context (e.g., 'residential street', 'highway lane', 'interstate section', 'sidewalk', 'parking lot')
         debug: Enable debug output
         
     Returns:
@@ -46,11 +51,20 @@ def analyze_flood_risk(lat: float, lon: float, rainfall: float = 25.0,
     config_path = os.path.join(os.path.dirname(__file__), 'config.yaml')
     
     # Initialize core components
-    elevation_fetcher = ElevationFetcher(config_path)
-    weather_fetcher = WeatherFetcher(config_path)
-    surface_detector = Mask2FormerDetector(config_path, debug=debug)
-    risk_scorer = FloodRiskScorer(config_path)
-    recommender = FloodMitigationRecommender()
+    if json_mode:
+        # Suppress all output when in JSON mode
+        with redirect_stdout(StringIO()):
+            elevation_fetcher = ElevationFetcher(config_path)
+            weather_fetcher = WeatherFetcher(config_path)
+            surface_detector = Mask2FormerDetector(config_path, debug=debug)
+            risk_scorer = FloodRiskScorer(config_path)
+            recommender = FloodMitigationRecommender()
+    else:
+        elevation_fetcher = ElevationFetcher(config_path)
+        weather_fetcher = WeatherFetcher(config_path)
+        surface_detector = Mask2FormerDetector(config_path, debug=debug)
+        risk_scorer = FloodRiskScorer(config_path)
+        recommender = FloodMitigationRecommender()
     
     # Check for existing images
     data_dir = os.path.join(os.path.dirname(__file__), "data", "processed")
@@ -64,57 +78,106 @@ def analyze_flood_risk(lat: float, lon: float, rainfall: float = 25.0,
     existing_images = [img for img in image_paths if os.path.exists(img)]
     
     if not existing_images:
-        raise FileNotFoundError(
-            f"No images found for coordinates {lat}, {lon}. "
-            f"Expected files: {[os.path.basename(img) for img in image_paths]}"
-        )
+        # Try to fetch images using Street View API
+        if not debug and not json_mode:
+            print(f"📸 No local images found. Fetching from Google Street View...")
+        
+        try:
+            if json_mode:
+                with redirect_stdout(StringIO()):
+                    streetview_fetcher = StreetViewFetcher(config_path)
+                    fetched_images = streetview_fetcher.fetch_images(lat, lon, data_dir)
+            else:
+                streetview_fetcher = StreetViewFetcher(config_path)
+                fetched_images = streetview_fetcher.fetch_images(lat, lon, data_dir)
+            
+            existing_images = fetched_images
+            
+        except Exception as e:
+            raise FileNotFoundError(
+                f"No images found for coordinates {lat}, {lon} and failed to fetch from Street View: {e}. "
+                f"Expected files: {[os.path.basename(img) for img in image_paths]}"
+            )
     
-    if not debug:
+    if not debug and not json_mode:
         print(f"📸 Using Mask2Former with {len(existing_images)} local images...")
     
     # Step 1: Surface Analysis
-    surfaces = surface_detector.analyze_local_images(existing_images)
+    if json_mode:
+        # Suppress output when in JSON mode
+        with redirect_stdout(StringIO()):
+            surfaces = surface_detector.analyze_local_images(existing_images)
+    else:
+        surfaces = surface_detector.analyze_local_images(existing_images)
     
     # Step 2: Get elevation and slope
-    if not debug:
+    if not debug and not json_mode:
         print("⛰️  Loading stored elevation and slope...")
-    elevation = elevation_fetcher._get_elevation(lat, lon) or 50.0
-    slope_pct = elevation_fetcher.get_slope(lat, lon)
+    
+    if json_mode:
+        with redirect_stdout(StringIO()):
+            elevation = elevation_fetcher._get_elevation(lat, lon) or 50.0
+            slope_pct = elevation_fetcher.get_slope(lat, lon)
+    else:
+        elevation = elevation_fetcher._get_elevation(lat, lon) or 50.0
+        slope_pct = elevation_fetcher.get_slope(lat, lon)
     
     # Step 3: Get rainfall forecast  
-    if not debug:
+    if not debug and not json_mode:
         print("🌧️  Fetching rainfall forecast...")
     try:
-        rainfall_mm = weather_fetcher.get_rainfall(lat, lon)
+        if json_mode:
+            with redirect_stdout(StringIO()):
+                rainfall_mm = weather_fetcher.get_rainfall(lat, lon)
+        else:
+            rainfall_mm = weather_fetcher.get_rainfall(lat, lon)
     except:
         rainfall_mm = rainfall
-        if not debug:
+        if not debug and not json_mode:
             print(f"⚠️ Warning: Using mock data - OpenWeather API key not configured")
             print(f"🌧️ Mock rainfall forecast (24h): {rainfall_mm}mm")
     
     # Step 4: Calculate flood risk
-    if not debug:
+    if not debug and not json_mode:
         print("🔍 Analyzing surface types with Mask2Former...")
         print("⚠️  Calculating flood risk score...")
     
-    risk_data = risk_scorer.calculate_flood_risk(
-        rainfall_mm=rainfall_mm,
-        asphalt_pct=surfaces['asphalt'],
-        slope_pct=slope_pct,
-        drain_pct=0.0,  # Estimated - could be enhanced
-        greenery_pct=surfaces['greenery'],
-        peak_intensity=rainfall_mm / 2,  # Rough estimate
-        drains=drains
-    )
+    if json_mode:
+        with redirect_stdout(StringIO()):
+            risk_data = risk_scorer.calculate_flood_risk(
+                rainfall_mm=rainfall_mm,
+                asphalt_pct=surfaces['asphalt'],
+                slope_pct=slope_pct,
+                drain_pct=0.0,  # Estimated - could be enhanced
+                greenery_pct=surfaces['greenery'],
+                peak_intensity=rainfall_mm / 2,  # Rough estimate
+                drains=drains
+            )
+    else:
+        risk_data = risk_scorer.calculate_flood_risk(
+            rainfall_mm=rainfall_mm,
+            asphalt_pct=surfaces['asphalt'],
+            slope_pct=slope_pct,
+            drain_pct=0.0,  # Estimated - could be enhanced
+            greenery_pct=surfaces['greenery'],
+            peak_intensity=rainfall_mm / 2,  # Rough estimate
+            drains=drains
+        )
     
     # Step 5: Generate recommendations
-    if not debug:
+    if not debug and not json_mode:
         print("💡 Generating recommendations...")
-    recommendations = recommender.generate_recommendations(risk_data)
+    
+    if json_mode:
+        with redirect_stdout(StringIO()):
+            recommendations = recommender.generate_recommendations(risk_data, road_type=road_type)
+    else:
+        recommendations = recommender.generate_recommendations(risk_data, road_type=road_type)
     
     # Compile results
     results = {
         'coords': {'lat': lat, 'lon': lon},
+        'road_type': road_type,
         'rainfall_mm': rainfall_mm,
         'slope_pct': slope_pct,
         'elevation_m': elevation,
@@ -160,6 +223,9 @@ Examples:
                        help='Rainfall amount in mm (default: 25)')
     parser.add_argument('--drains', type=str, choices=['ok', 'none', 'unknown'], 
                        default='unknown', help='Drainage condition (default: unknown)')
+    parser.add_argument('--road-type', type=str, dest='road_type',
+                       choices=['residential street', 'highway lane', 'interstate section', 'sidewalk', 'parking lot'],
+                       default='residential street', help='Type of road/location context (default: residential street)')
     
     args = parser.parse_args()
     
@@ -179,7 +245,9 @@ Examples:
             lon=args.lon,
             rainfall=args.rainfall,
             drains=args.drains,
-            debug=args.debug
+            road_type=getattr(args, 'road_type', 'residential street'),
+            debug=args.debug,
+            json_mode=args.json
         )
         
         if args.json:
@@ -210,11 +278,56 @@ Examples:
             print(f"   Risk Score: {results['risk']['score']:.1f}/100")
             print(f"   Risk Level: {results['risk']['level']}")
             print()
-            print(f"💡 RECOMMENDATIONS")
+            print(f"📌 RECOMMENDED ACTIONS")
             recs = results['recommendation']
-            print(f"   📈 Expected Risk Reduction: {recs['expected_risk_reduction']['expected_reduction_percentage']:.0f}%")
-            print(f"   💰 Total Cost: ${recs['cost_analysis']['total_estimated_cost']:,}")
-            print(f"   🎯 Top Priority: {recs['primary_recommendations'][0]['title']}")
+            
+            # Show interventions if available (new format)
+            if 'interventions' in recs and recs['interventions']:
+                for i, intervention in enumerate(recs['interventions'], 1):
+                    print(f"   {i}. {intervention['type'].replace('_', ' ').title()}")
+                    if 'qty_sqft' in intervention:
+                        print(f"      • Area: {intervention['qty_sqft']:,} sq ft")
+                    elif 'qty_ft' in intervention:
+                        print(f"      • Length: {intervention['qty_ft']:,} ft")
+                    elif 'qty_trees' in intervention:
+                        print(f"      • Trees: {intervention['qty_trees']} trees")
+                    elif 'qty_inlets' in intervention:
+                        print(f"      • Inlets: {intervention['qty_inlets']} inlets")
+                    print(f"      • Cost: ${intervention['cost_low']:,} - ${intervention['cost_high']:,}")
+                    print(f"      • Duration: {intervention['construction_time']}")
+                    print(f"      • Flood Reduction: {intervention['flood_reduction_pct']}%")
+                    print(f"      • Impact: {intervention['impact_description']}")
+                    print()
+                
+                print(f"💰 ESTIMATED COST")
+                total_cost = recs.get('total_cost', {})
+                if total_cost:
+                    print(f"   Low: ${total_cost['low']:,}")
+                    print(f"   Mid: ${total_cost['mid']:,}") 
+                    print(f"   High: ${total_cost['high']:,}")
+                else:
+                    print(f"   Total: ${recs['cost_analysis']['total_estimated_cost']:,}")
+                print()
+                
+                print(f"🕒 CONSTRUCTION TIME")
+                print(f"   Total Duration: {recs.get('total_duration', 'Not calculated')}")
+                print()
+                
+                print(f"🚧 COMMUNITY IMPACT")
+                print(f"   Road Type: {results.get('road_type', 'Unknown').title()}")
+                print(f"   Summary: {recs.get('community_summary', 'Impact assessment not available')}")
+                print()
+                
+                print(f"💧 FLOOD REDUCTION")
+                print(f"   Expected Reduction: {recs.get('total_flood_reduction_pct', recs['expected_risk_reduction']['expected_reduction_percentage'])}%")
+                
+            else:
+                # Fallback to legacy format
+                print(f"   📈 Expected Risk Reduction: {recs['expected_risk_reduction']['expected_reduction_percentage']:.0f}%")
+                print(f"   💰 Total Cost: ${recs['cost_analysis']['total_estimated_cost']:,}")
+                if recs['primary_recommendations']:
+                    print(f"   🎯 Top Priority: {recs['primary_recommendations'][0]['title']}")
+            
             print()
             print(f"📷 Street View Image: {results['streetImageUrl']}")
             print()

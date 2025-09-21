@@ -37,6 +37,13 @@ class FloodAnalysisService {
         '--json'
       ];
 
+      // Add environment variables for Python
+      const env = { 
+        ...process.env,
+        PYTHONUNBUFFERED: '1',  // Ensure Python output is not buffered
+        PYTHONWARNINGS: 'ignore'  // Suppress Python warnings
+      };
+
       // Add optional parameters
       if (options.rainfall) {
         args.push('--rainfall', options.rainfall.toString());
@@ -44,6 +51,10 @@ class FloodAnalysisService {
 
       if (options.drains) {
         args.push('--drains', options.drains);
+      }
+
+      if (options.road_type) {
+        args.push('--road-type', options.road_type);
       }
 
       if (options.debug) {
@@ -56,7 +67,8 @@ class FloodAnalysisService {
       // Execute Python script
       const python = spawn('python', args, {
         cwd: this.apiPath,
-        stdio: ['ignore', 'pipe', 'pipe']
+        stdio: ['ignore', 'pipe', 'pipe'],
+        env: env
       });
 
       let stdout = '';
@@ -78,8 +90,23 @@ class FloodAnalysisService {
         }
 
         try {
+          // Clean stdout - find the JSON part
+          let cleanOutput = stdout;
+          
+          // Look for the opening brace of JSON
+          const jsonStart = stdout.indexOf('{');
+          if (jsonStart > 0) {
+            cleanOutput = stdout.substring(jsonStart);
+          }
+          
+          // Look for the closing brace and remove anything after
+          const lastBrace = cleanOutput.lastIndexOf('}');
+          if (lastBrace > 0) {
+            cleanOutput = cleanOutput.substring(0, lastBrace + 1);
+          }
+          
           // Parse JSON output
-          const result = JSON.parse(stdout);
+          const result = JSON.parse(cleanOutput);
           
           // Add additional metadata
           result.analysisMetadata = {
@@ -94,7 +121,8 @@ class FloodAnalysisService {
           resolve(result);
         } catch (parseError) {
           console.error('Failed to parse JSON output:', parseError);
-          console.error('Raw output:', stdout);
+          console.error('Raw output length:', stdout.length);
+          console.error('Raw output preview:', stdout.substring(0, 200));
           reject(new Error(`Failed to parse analysis results: ${parseError.message}`));
         }
       });

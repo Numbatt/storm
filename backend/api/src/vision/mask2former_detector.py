@@ -12,6 +12,7 @@ from PIL import Image
 import torch
 from typing import Dict, List, Tuple, Optional
 import matplotlib.pyplot as plt
+import warnings
 
 try:
     from transformers import Mask2FormerImageProcessor, Mask2FormerForUniversalSegmentation
@@ -119,8 +120,16 @@ class Mask2FormerDetector:
         print(f"🤖 Loading Mask2Former model: {self.model_name}")
         
         try:
-            self.processor = Mask2FormerImageProcessor.from_pretrained(self.model_name)
-            self.model = Mask2FormerForUniversalSegmentation.from_pretrained(self.model_name)
+            # Suppress specific warnings about deprecated parameters during model loading
+            with warnings.catch_warnings():
+                warnings.filterwarnings("ignore", message=".*named arguments are not valid.*", category=UserWarning)
+                warnings.filterwarnings("ignore", message=".*_max_size.*", category=UserWarning) 
+                warnings.filterwarnings("ignore", message=".*reduce_labels.*", category=UserWarning)
+                
+                # Initialize processor and model
+                self.processor = Mask2FormerImageProcessor.from_pretrained(self.model_name)
+                self.model = Mask2FormerForUniversalSegmentation.from_pretrained(self.model_name)
+            
             self.model.eval()
             
             # Move to GPU if available
