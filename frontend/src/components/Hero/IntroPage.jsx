@@ -104,7 +104,14 @@ export const IntroPage = ({ onEnterApp }) => {
               transition={{ delay: 0.5, duration: 0.8 }}
               className="text-white text-2xl"
             >
-              Loading Storm...
+              <span>Loading </span>
+              <span 
+                className="italic bg-gradient-to-r from-[#51A3F0] via-[#99CBF7] to-[#E0F1FF] bg-clip-text text-transparent"
+                style={{ fontFamily: 'Georgia, serif' }}
+              >
+                Storm
+              </span>
+              ...
             </motion.div>
           </motion.div>
         )}
