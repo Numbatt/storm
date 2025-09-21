@@ -10,12 +10,15 @@ pids
 *.seed
 *.pid.lock
 
-# Environment variables
+# Environment variables (keep .env.example)
 .env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
+
+# API Keys and sensitive data
+backend/api/config_with_keys.yaml
 
 # IDE files
 .vscode/
