@@ -1,17 +1,30 @@
+import { useState } from 'react'
 import { useSelector } from 'react-redux'
 import { selectRainfall, selectDuration, selectLoading, selectError, selectResults, selectStatistics } from './store/slices/simulationSlice'
 import FloodMap from './components/Map/FloodMap'
 import RainfallSlider from './components/Controls/RainfallSlider'
 import DurationSlider from './components/Controls/DurationSlider'
 import SimulationButton from './components/Controls/SimulationButton'
+import LandingPage from './components/Hero/LandingPage'
 
 function App() {
+  const [showLandingPage, setShowLandingPage] = useState(true)
   const rainfall = useSelector(selectRainfall)
   const duration = useSelector(selectDuration)
   const loading = useSelector(selectLoading)
   const error = useSelector(selectError)
   const results = useSelector(selectResults)
   const statistics = useSelector(selectStatistics)
+
+  // Handle entering the main application from hero screen
+  const handleEnterApp = () => {
+    setShowLandingPage(false)
+  }
+
+  // Show landing page first
+  if (showLandingPage) {
+    return <LandingPage onEnterApp={handleEnterApp} />
+  }
 
   return (
     <div className="h-screen w-screen flex flex-col">

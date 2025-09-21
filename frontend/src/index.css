@@ -1,9 +1,9 @@
+/* Leaflet CSS imports */
+@import 'leaflet/dist/leaflet.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-
-/* Leaflet CSS imports */
-@import 'leaflet/dist/leaflet.css';
 
 /* Custom base styles */
 body {
