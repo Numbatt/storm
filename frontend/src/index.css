@@ -48,6 +48,17 @@ html, body {
   --lightning-shadow: 0 0 20px var(--bolt-glow);
 }
 
+/* Light Mode Storm Analysis Theme Variables */
+.light {
+  --bolt-core: #1d4ed8;
+  --bolt-glow: #3b82f6;
+  --dot-idle: #94a3b8;
+  --dot-active: #3b82f6;
+  --dot-done: #16a34a;
+  --dot-error: #dc2626;
+  --lightning-shadow: 0 0 20px var(--bolt-glow);
+}
+
 /* Storm Background */
 .storm-background {
   background: 
@@ -55,6 +66,15 @@ html, body {
     radial-gradient(circle at 80% 20%, rgba(255, 255, 255, 0.05) 0%, transparent 50%),
     radial-gradient(circle at 40% 40%, rgba(29, 78, 216, 0.1) 0%, transparent 50%),
     linear-gradient(135deg, var(--storm-bg-primary) 0%, var(--storm-bg-secondary) 100%);
+}
+
+/* Light mode storm background */
+.light .storm-background {
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(59, 130, 246, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(139, 92, 246, 0.03) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(29, 78, 216, 0.04) 0%, transparent 50%),
+    linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
 }
 
 /* Lightning Bolt Animation */

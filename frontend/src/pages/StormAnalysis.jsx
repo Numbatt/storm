@@ -195,13 +195,13 @@ function StormAnalysisContent() {
       drains: 'unknown'
     }
 
-    console.log('⚡ Starting storm analysis with payload:', requestPayload)
+    console.log('Starting storm analysis with payload:', requestPayload)
 
     try {
       await simulateStepProgress(async (stepId) => {
         if (stepId === 5) {
           // Actually call the API on step 5 (final step)
-          console.log('📡 Calling flood analysis API...')
+          console.log('Calling flood analysis API...')
           const response = await fetch('http://localhost:3001/api/flood-analysis/analyze', {
             method: 'POST',
             headers: { 
@@ -212,11 +212,11 @@ function StormAnalysisContent() {
           })
 
           const data = await response.json()
-          console.log('📥 API Response:', data)
+          console.log('API Response:', data)
 
           if (!response.ok) {
             const errorMessage = data.details || data.error || `HTTP ${response.status}: ${response.statusText}`
-            console.error('❌ API Error:', errorMessage)
+            console.error('API Error:', errorMessage)
             throw new Error(errorMessage)
           }
 
@@ -232,7 +232,7 @@ function StormAnalysisContent() {
         return true
       })
 
-      console.log('✅ Storm analysis completed successfully')
+      console.log('Storm analysis completed successfully')
     } catch (err) {
       console.error('❌ Storm analysis failed:', err)
       
@@ -269,25 +269,32 @@ function StormAnalysisContent() {
   }, [activeStep])
 
   return (
-    <div className="h-screen w-screen storm-background text-white overflow-hidden flex flex-col">
+    <div className="h-screen w-screen storm-background text-white dark:text-white light:text-gray-900 overflow-hidden flex flex-col">
       {/* Header */}
       <motion.header 
         initial={{ y: -100, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
         transition={{ duration: 0.8, ease: "easeOut" }}
-        className="relative z-30 bg-black/20 backdrop-blur-md border-b border-white/10 p-4"
+        className="relative z-30 bg-black/20 dark:bg-black/20 light:bg-white/90 backdrop-blur-md border-b border-white/10 dark:border-white/10 light:border-gray-200 p-4"
       >
         <div className="flex items-center justify-between max-w-7xl mx-auto">
           <div>
-            <h1 className="text-2xl font-light tracking-wide">
+            <h1 className="text-2xl font-light tracking-wide flex items-center">
+              <svg 
+                className="w-6 h-6 mr-2 text-[#7dd3ff] dark:text-[#7dd3ff] light:text-[#1d4ed8]" 
+                fill="currentColor" 
+                viewBox="0 0 24 24"
+              >
+                <path d="M11 21h-1l1-7H7.5c-.88 0-.33-.75-.31-.78C8.48 10.94 10.42 7.54 13.01 3h1.05L13 10h3.5c.49 0 .56.75.47.8C15.49 13.06 13.51 16.46 11 21z"/>
+              </svg>
               <span 
-                className="italic bg-gradient-to-r from-[#7dd3ff] via-[#60a5fa] to-[#93c5fd] bg-clip-text text-transparent"
+                className="italic bg-gradient-to-r from-[#7dd3ff] via-[#60a5fa] to-[#93c5fd] dark:from-[#7dd3ff] dark:via-[#60a5fa] dark:to-[#93c5fd] light:from-[#1d4ed8] light:via-[#3b82f6] light:to-[#60a5fa] bg-clip-text text-transparent"
                 style={{ fontFamily: 'Georgia, serif' }}
               >
                 Storm
               </span>
             </h1>
-            <div className="text-sm text-gray-300 mt-1 flex items-center space-x-4">
+            <div className="text-sm text-gray-300 dark:text-gray-300 light:text-gray-600 mt-1 flex items-center space-x-4">
               <motion.span
                 key={currentLocation.fullName}
                 initial={{ opacity: 0.7 }}
@@ -296,7 +303,7 @@ function StormAnalysisContent() {
               >
                 {locationLoading ? (
                   <span className="flex items-center">
-                    <div className="w-3 h-3 border border-gray-400 border-t-transparent rounded-full animate-spin mr-2"></div>
+                    <div className="w-3 h-3 border border-gray-400 dark:border-gray-400 light:border-gray-600 border-t-transparent rounded-full animate-spin mr-2"></div>
                     Detecting location...
                   </span>
                 ) : (
@@ -304,7 +311,7 @@ function StormAnalysisContent() {
                 )}
               </motion.span>
               {formData.latitude && formData.longitude && (
-                <span className="text-[#7dd3ff]">
+                <span className="text-[#7dd3ff] dark:text-[#7dd3ff] light:text-[#1d4ed8]">
                   {parseFloat(formData.latitude).toFixed(4)}, {parseFloat(formData.longitude).toFixed(4)}
                   {cityName && ` • ${cityName}`}
                 </span>
@@ -318,7 +325,7 @@ function StormAnalysisContent() {
               disabled={isAnalyzing || !formData.latitude || !formData.longitude}
               whileHover={{ scale: 1.02 }}
               whileTap={{ scale: 0.98 }}
-              className="px-6 py-3 bg-gradient-to-r from-[#7dd3ff] to-[#60a5fa] text-gray-900 rounded-lg font-bold hover:from-[#60a5fa] hover:to-[#7dd3ff] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
+              className="px-6 py-3 bg-gradient-to-r from-[#7dd3ff] to-[#60a5fa] dark:from-[#7dd3ff] dark:to-[#60a5fa] light:from-[#1d4ed8] light:to-[#3b82f6] text-gray-900 dark:text-gray-900 light:text-white rounded-lg font-bold hover:from-[#60a5fa] hover:to-[#7dd3ff] dark:hover:from-[#60a5fa] dark:hover:to-[#7dd3ff] light:hover:from-[#3b82f6] light:hover:to-[#1d4ed8] transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center space-x-2"
             >
               {isAnalyzing ? (
                 <>
@@ -336,7 +343,7 @@ function StormAnalysisContent() {
             </motion.button>
             <Link 
               to="/" 
-              className="px-4 py-2 bg-white/10 hover:bg-white/20 border border-white/20 rounded-lg text-sm font-medium transition-all duration-300"
+              className="px-4 py-2 bg-white/10 dark:bg-white/10 light:bg-gray-100 hover:bg-white/20 dark:hover:bg-white/20 light:hover:bg-gray-200 border border-white/20 dark:border-white/20 light:border-gray-300 rounded-lg text-sm font-medium text-white dark:text-white light:text-gray-900 transition-all duration-300"
             >
               Back to Simulation
             </Link>
@@ -362,7 +369,7 @@ function StormAnalysisContent() {
         </div>
 
         {/* Content Panel Side */}
-        <div className="flex-1 lg:w-1/2 xl:w-3/5 bg-black/30 backdrop-blur-xl border-t lg:border-t-0 lg:border-l border-white/10 overflow-y-auto">
+        <div className="flex-1 lg:w-1/2 xl:w-3/5 bg-black/30 dark:bg-black/30 light:bg-white/80 backdrop-blur-xl border-t lg:border-t-0 lg:border-l border-white/10 dark:border-white/10 light:border-gray-200 overflow-y-auto">
           <ErrorBoundary>
             <ContentPanel 
               activeStep={activeStep}
@@ -513,7 +520,7 @@ function LightningFlow({
                 x={position.x + 20}
                 y={position.y + 5}
                 className={`text-sm font-medium pointer-events-none ${
-                  isActive ? 'fill-[#7dd3ff]' : 'fill-gray-300'
+                  isActive ? 'fill-[#7dd3ff] dark:fill-[#7dd3ff] light:fill-[#2563eb]' : 'fill-gray-300 dark:fill-gray-300 light:fill-gray-600'
                 }`}
                 aria-hidden="true"
               >
@@ -594,47 +601,47 @@ function Step1InputAcquisition({ formData, onInputChange, onSelectCoordinates, r
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-[#7dd3ff] mb-2">Input & Data Acquisition</h2>
-        <p className="text-gray-300">Enter coordinates to begin the lightning-fast analysis</p>
+        <h2 className="text-2xl font-bold text-[#7dd3ff] dark:text-[#7dd3ff] light:text-[#1d4ed8] mb-2">Input & Data Acquisition</h2>
+        <p className="text-gray-300 dark:text-gray-300 light:text-gray-600">Enter coordinates of a road to begin the lightning-fast analysis</p>
       </div>
 
       {/* Coordinate Input */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">Latitude</label>
+          <label className="block text-sm font-medium text-gray-300 dark:text-gray-300 light:text-gray-700 mb-2">Latitude</label>
           <input
             type="text"
             name="latitude"
             value={formData.latitude}
             onChange={onInputChange}
             placeholder="29.7158"
-            className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7dd3ff] focus:border-transparent transition-all duration-300"
+            className="w-full px-4 py-3 bg-white/5 dark:bg-white/5 light:bg-white border border-white/20 dark:border-white/20 light:border-gray-300 rounded-lg text-white dark:text-white light:text-gray-900 placeholder-gray-400 dark:placeholder-gray-400 light:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#7dd3ff] focus:border-transparent transition-all duration-300"
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-300 mb-2">Longitude</label>
+          <label className="block text-sm font-medium text-gray-300 dark:text-gray-300 light:text-gray-700 mb-2">Longitude</label>
           <input
             type="text"
             name="longitude"
             value={formData.longitude}
             onChange={onInputChange}
             placeholder="-95.4018"
-            className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#7dd3ff] focus:border-transparent transition-all duration-300"
+            className="w-full px-4 py-3 bg-white/5 dark:bg-white/5 light:bg-white border border-white/20 dark:border-white/20 light:border-gray-300 rounded-lg text-white dark:text-white light:text-gray-900 placeholder-gray-400 dark:placeholder-gray-400 light:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#7dd3ff] focus:border-transparent transition-all duration-300"
           />
         </div>
       </div>
 
       {/* Road Type */}
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-2">Road Type</label>
+        <label className="block text-sm font-medium text-gray-300 dark:text-gray-300 light:text-gray-700 mb-2">Road Type</label>
         <select
           name="roadType"
           value={formData.roadType}
           onChange={onInputChange}
-          className="w-full px-4 py-3 bg-white/5 border border-white/20 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-[#7dd3ff] focus:border-transparent transition-all duration-300"
+          className="w-full px-4 py-3 bg-white/5 dark:bg-white/5 light:bg-white border border-white/20 dark:border-white/20 light:border-gray-300 rounded-lg text-white dark:text-white light:text-gray-900 focus:outline-none focus:ring-2 focus:ring-[#7dd3ff] focus:border-transparent transition-all duration-300"
         >
           {roadTypes.map(type => (
-            <option key={type.value} value={type.value} className="bg-gray-800">
+            <option key={type.value} value={type.value} className="bg-gray-800 dark:bg-gray-800 light:bg-white">
               {type.label}
             </option>
           ))}
@@ -643,8 +650,8 @@ function Step1InputAcquisition({ formData, onInputChange, onSelectCoordinates, r
 
       {/* Rainfall Slider */}
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-2">Expected Rainfall (24h)</label>
-        <div className="bg-white/5 border border-white/20 rounded-lg p-4">
+        <label className="block text-sm font-medium text-gray-300 dark:text-gray-300 light:text-gray-700 mb-2">Expected Rainfall (24h)</label>
+        <div className="bg-white/5 dark:bg-white/5 light:bg-gray-50 border border-white/20 dark:border-white/20 light:border-gray-300 rounded-lg p-4">
           <div className="flex items-center justify-between mb-3">
             <span className="text-blue-400 font-semibold">{rainfallValue}mm</span>
             <span className="text-xs text-gray-400">
@@ -674,32 +681,32 @@ function Step1InputAcquisition({ formData, onInputChange, onSelectCoordinates, r
 
       {/* Quick Select */}
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-3">Quick Select Locations</label>
+        <label className="block text-sm font-medium text-gray-300 dark:text-gray-300 light:text-gray-700 mb-3">Quick Select Locations</label>
         <div className="flex flex-wrap gap-2">
           <button
             onClick={() => onSelectCoordinates(29.715820777907464, -95.40178894546409, 'Houston')}
-            className="px-3 py-2 bg-white/10 hover:bg-[#7dd3ff]/20 border border-white/20 hover:border-[#7dd3ff]/50 rounded-lg text-sm text-gray-300 hover:text-[#7dd3ff] transition-all duration-300"
+            className="px-3 py-2 bg-white/10 dark:bg-white/10 light:bg-gray-100 hover:bg-[#7dd3ff]/20 border border-white/20 dark:border-white/20 light:border-gray-300 hover:border-[#7dd3ff]/50 rounded-lg text-sm text-gray-300 dark:text-gray-300 light:text-gray-700 hover:text-[#7dd3ff] dark:text-[#7dd3ff] light:text-[#1d4ed8] transition-all duration-300"
           >
-            ⚡ Houston
+            Houston
           </button>
           <button
             onClick={() => onSelectCoordinates(37.7749, -122.4194, 'San Francisco')}
-            className="px-3 py-2 bg-white/10 hover:bg-[#7dd3ff]/20 border border-white/20 hover:border-[#7dd3ff]/50 rounded-lg text-sm text-gray-300 hover:text-[#7dd3ff] transition-all duration-300"
+            className="px-3 py-2 bg-white/10 dark:bg-white/10 light:bg-gray-100 hover:bg-[#7dd3ff]/20 border border-white/20 dark:border-white/20 light:border-gray-300 hover:border-[#7dd3ff]/50 rounded-lg text-sm text-gray-300 dark:text-gray-300 light:text-gray-700 hover:text-[#7dd3ff] dark:text-[#7dd3ff] light:text-[#1d4ed8] transition-all duration-300"
           >
-            🌉 San Francisco
+            San Francisco
           </button>
           <button
             onClick={() => onSelectCoordinates(37.42033466724041, -122.0368897987091, 'Palo Alto')}
-            className="px-3 py-2 bg-white/10 hover:bg-[#7dd3ff]/20 border border-white/20 hover:border-[#7dd3ff]/50 rounded-lg text-sm text-gray-300 hover:text-[#7dd3ff] transition-all duration-300"
+            className="px-3 py-2 bg-white/10 dark:bg-white/10 light:bg-gray-100 hover:bg-[#7dd3ff]/20 border border-white/20 dark:border-white/20 light:border-gray-300 hover:border-[#7dd3ff]/50 rounded-lg text-sm text-gray-300 dark:text-gray-300 light:text-gray-700 hover:text-[#7dd3ff] dark:text-[#7dd3ff] light:text-[#1d4ed8] transition-all duration-300"
           >
-            🏢 Palo Alto
+            Palo Alto
           </button>
         </div>
       </div>
 
       {/* Error Display */}
       {error && (
-        <div className="p-4 bg-red-500/20 border border-red-500/30 text-red-300 rounded-xl">
+        <div className="p-4 bg-red-500/20 dark:bg-red-500/20 light:bg-red-100 border border-red-500/30 dark:border-red-500/30 light:border-red-300 text-red-300 dark:text-red-300 light:text-red-700 rounded-xl">
           <div className="flex items-center">
             <svg className="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20">
               <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
@@ -711,13 +718,13 @@ function Step1InputAcquisition({ formData, onInputChange, onSelectCoordinates, r
 
       {/* Status */}
       {formData.latitude && formData.longitude && (
-        <div className="p-4 bg-[#7dd3ff]/10 border border-[#7dd3ff]/30 rounded-xl">
-          <h3 className="text-[#7dd3ff] font-medium mb-2">Ready for Analysis</h3>
-          <p className="text-gray-300 text-sm">
+        <div className="p-4 bg-[#7dd3ff]/10 dark:bg-[#7dd3ff]/10 light:bg-[#7dd3ff]/20 border border-[#7dd3ff]/30 dark:border-[#7dd3ff]/30 light:border-[#7dd3ff]/50 rounded-xl">
+          <h3 className="text-[#7dd3ff] dark:text-[#7dd3ff] light:text-[#1d4ed8] font-medium mb-2">Ready for Analysis</h3>
+          <p className="text-gray-300 dark:text-gray-300 light:text-gray-600 text-sm">
             Coordinates: {parseFloat(formData.latitude).toFixed(4)}, {parseFloat(formData.longitude).toFixed(4)}
             {cityName && ` • ${cityName}`}
           </p>
-          <p className="text-gray-300 text-sm">Road Type: {roadTypes.find(t => t.value === formData.roadType)?.label}</p>
+          <p className="text-gray-300 dark:text-gray-300 light:text-gray-600 text-sm">Road Type: {roadTypes.find(t => t.value === formData.roadType)?.label}</p>
         </div>
       )}
     </div>
@@ -742,11 +749,11 @@ function ImageCard({
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ delay: angle / 100 }}
-      className="group bg-white/5 rounded-xl p-4 border border-white/10 hover:border-[#7dd3ff]/40 transition-all duration-300 hover:shadow-lg hover:shadow-[#7dd3ff]/10"
+      className="group bg-white/5 dark:bg-white/5 light:bg-white rounded-xl p-4 border border-white/10 dark:border-white/10 light:border-gray-200 hover:border-[#7dd3ff]/40 transition-all duration-300 hover:shadow-lg hover:shadow-[#7dd3ff]/10"
       onMouseEnter={() => setHoveredImage(angle)}
       onMouseLeave={() => setHoveredImage(null)}
     >
-      <div className="aspect-video bg-gray-700/50 rounded-lg mb-3 overflow-hidden relative shadow-inner">
+      <div className="aspect-video bg-gray-700/50 dark:bg-gray-700/50 light:bg-gray-200 rounded-lg mb-3 overflow-hidden relative shadow-inner">
         {isLoading ? (
           <div className="absolute inset-0 flex items-center justify-center bg-gray-800/50">
             <div className="flex flex-col items-center space-y-2">
@@ -798,7 +805,7 @@ function ImageCard({
       </div>
       
       <div className="flex items-center justify-between">
-        <div className="text-sm font-medium text-gray-300">
+        <div className="text-sm font-medium text-gray-300 dark:text-gray-300 light:text-gray-700">
           Direction: {angle}°
         </div>
         <div className="flex items-center space-x-1">
@@ -822,19 +829,19 @@ function ImageCard({
       </div>
       
       {/* Surface legend */}
-      <div className="mt-2 pt-2 border-t border-white/10">
+      <div className="mt-2 pt-2 border-t border-white/10 dark:border-white/10 light:border-gray-200">
         <div className="flex items-center justify-between text-xs">
           <div className="flex items-center space-x-1">
             <div className="w-2 h-2 bg-gray-500 rounded-full"></div>
-            <span className="text-gray-400">Asphalt</span>
+            <span className="text-gray-400 dark:text-gray-400 light:text-gray-600">Asphalt</span>
           </div>
           <div className="flex items-center space-x-1">
             <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-            <span className="text-gray-400">Vegetation</span>
+            <span className="text-gray-400 dark:text-gray-400 light:text-gray-600">Vegetation</span>
           </div>
           <div className="flex items-center space-x-1">
             <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-            <span className="text-gray-400">Other</span>
+            <span className="text-gray-400 dark:text-gray-400 light:text-gray-600">Other</span>
           </div>
         </div>
       </div>
@@ -850,16 +857,16 @@ function Step2Segmentation({ results, isAnalyzing }) {
   const [hoveredImage, setHoveredImage] = useState(null)
 
   const handleImageLoad = (filename) => {
-    console.log('✅ Image loaded successfully:', filename)
+    console.log('Image loaded successfully:', filename)
     setImageLoadStates(prev => ({ ...prev, [filename]: 'loaded' }))
   }
 
   const handleImageError = (filename) => {
     setImageErrors(prev => ({ ...prev, [filename]: true }))
     setImageLoadStates(prev => ({ ...prev, [filename]: 'error' }))
-    console.error(`❌ Failed to load segmentation image: ${filename}`)
-    console.error(`❌ Check if backend is running on http://localhost:3001`)
-    console.error(`❌ Check if image exists at the constructed URL`)
+    console.error(`Failed to load segmentation image: ${filename}`)
+    console.error(`Check if backend is running on http://localhost:3001`)
+    console.error(`Check if image exists at the constructed URL`)
   }
 
   // Check if we have the new format (segmentation_folder and images array)
@@ -871,8 +878,8 @@ function Step2Segmentation({ results, isAnalyzing }) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-[#7dd3ff] mb-2">AI Segmentation</h2>
-        <p className="text-gray-300">Street View image analysis using Mask2Former with surface overlay</p>
+        <h2 className="text-2xl font-bold text-[#7dd3ff] dark:text-[#7dd3ff] light:text-[#1d4ed8] mb-2">AI Segmentation</h2>
+        <p className="text-gray-300 dark:text-gray-300 light:text-gray-600">Street View image analysis using Mask2Former with surface overlay</p>
       </div>
       
       <div className="grid grid-cols-2 gap-4">
@@ -881,15 +888,15 @@ function Step2Segmentation({ results, isAnalyzing }) {
           results.images.map(filename => {
             const angle = filename.split('.')[0] // Extract angle from filename (e.g., "0.jpg" -> "0")
             const imageUrl = `http://localhost:3001${results.segmentation_folder}${filename}`
-            console.log('🔍 Debug - Image URL:', imageUrl)
-            console.log('🔍 Debug - segmentation_folder:', results.segmentation_folder)
-            console.log('🔍 Debug - filename:', filename)
+            console.log('Debug - Image URL:', imageUrl)
+            console.log('Debug - segmentation_folder:', results.segmentation_folder)
+            console.log('Debug - filename:', filename)
             
             // FIXED: Only show loading state if we're analyzing AND haven't loaded the image yet
             const isLoading = isAnalyzing && !imageLoadStates[filename] && !imageErrors[filename]
             const hasError = imageErrors[filename]
             const isLoaded = imageLoadStates[filename] === 'loaded'
-            console.log('🔍 Debug - Loading states:', { isLoading, hasError, isLoaded, imageLoadStates: imageLoadStates[filename] })
+            console.log('Debug - Loading states:', { isLoading, hasError, isLoaded, imageLoadStates: imageLoadStates[filename] })
             
             return (
               <ImageCard 
@@ -952,25 +959,25 @@ function Step2Segmentation({ results, isAnalyzing }) {
         )}
       </div>
 
-      <div className="p-4 bg-blue-500/10 border border-blue-500/30 rounded-xl">
+      <div className="p-4 bg-blue-500/10 dark:bg-blue-500/10 light:bg-blue-100 border border-blue-500/30 dark:border-blue-500/30 light:border-blue-300 rounded-xl">
         <div className="flex items-start space-x-3">
-          <svg className="w-5 h-5 text-blue-400 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-5 h-5 text-blue-400 dark:text-blue-400 light:text-blue-600 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
           <div>
-            <p className="text-blue-300 text-sm">
+            <p className="text-blue-300 dark:text-blue-300 light:text-blue-700 text-sm">
               {isAnalyzing ? (
-                "🔍 Processing street view images with AI-powered segmentation to identify surface types..."
+                "Processing street view images with AI-powered segmentation to identify surface types..."
               ) : hasSegmentationImages ? (
                 hasNewFormat ? 
-                  `✅ Segmentation complete — ${results.images.length} segmented images saved with AI surface analysis highlighting vegetation (green), asphalt (gray), and other structures (blue).` :
-                  "✅ Segmentation complete — AI has analyzed surfaces and highlighted vegetation (green), asphalt (gray), and other structures (blue)."
+                  `Segmentation complete — ${results.images.length} segmented images saved with AI surface analysis highlighting vegetation (green), asphalt (gray), and other structures (blue).` :
+                  "Segmentation complete — AI has analyzed surfaces and highlighted vegetation (green), asphalt (gray), and other structures (blue)."
               ) : (
-                "⏳ Segmentation will be processed during analysis to identify flood-relevant surface types..."
+                "Segmentation will be processed during analysis to identify flood-relevant surface types..."
               )}
             </p>
             {hasSegmentationImages && (
-              <p className="text-blue-300/70 text-xs mt-1">
+              <p className="text-blue-300/70 dark:text-blue-300/70 light:text-blue-600/70 text-xs mt-1">
                 Hover over images to zoom. Surface types are color-coded for easy identification.
                 {hasNewFormat && ` Results saved to: ${results.segmentation_folder}`}
               </p>
@@ -988,7 +995,7 @@ function Step3SurfaceCoverage({ results }) {
     return (
       <div className="space-y-6">
         <div>
-          <h2 className="text-2xl font-bold text-[#7dd3ff] mb-2">Surface Coverage</h2>
+          <h2 className="text-2xl font-bold text-[#7dd3ff] dark:text-[#7dd3ff] light:text-[#1d4ed8] mb-2">Surface Coverage</h2>
           <p className="text-gray-300">Analyzing surface types and percentages</p>
         </div>
         <div className="p-8 bg-white/5 rounded-xl border border-white/10 flex items-center justify-center">
@@ -1009,14 +1016,14 @@ function Step3SurfaceCoverage({ results }) {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold text-[#7dd3ff] mb-2">Surface Coverage Analysis</h2>
-        <p className="text-gray-300">AI-powered surface segmentation results using Mask2Former</p>
-      </div>
+        <div>
+          <h2 className="text-2xl font-bold text-[#7dd3ff] dark:text-[#7dd3ff] light:text-[#1d4ed8] mb-2">Surface Coverage Analysis</h2>
+          <p className="text-gray-300 dark:text-gray-300 light:text-gray-600">AI-powered surface segmentation results using Mask2Former</p>
+        </div>
 
       {/* Donut Chart */}
-      <div className="bg-white/5 rounded-xl border border-white/10 p-6">
-        <h3 className="text-lg font-semibold text-white mb-4">Surface Type Distribution</h3>
+      <div className="bg-white/5 dark:bg-white/5 light:bg-white rounded-xl border border-white/10 dark:border-white/10 light:border-gray-200 p-6">
+        <h3 className="text-lg font-semibold text-white dark:text-white light:text-gray-900 mb-4">Surface Type Distribution</h3>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
@@ -1045,7 +1052,7 @@ function Step3SurfaceCoverage({ results }) {
                 initial={{ opacity: 0, x: 20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.1 }}
-                className="flex items-center justify-between p-3 bg-white/5 rounded-lg"
+                className="flex items-center justify-between p-3 bg-white/5 dark:bg-white/5 light:bg-gray-50 rounded-lg"
               >
                 <div className="flex items-center space-x-3">
                   <div 
@@ -1053,12 +1060,12 @@ function Step3SurfaceCoverage({ results }) {
                     style={{ backgroundColor: item.color }}
                   />
                   <div>
-                    <div className="font-medium text-white">{item.name}</div>
-                    <div className="text-xs text-gray-400">{item.label}</div>
+                    <div className="font-medium text-white dark:text-white light:text-gray-900">{item.name}</div>
+                    <div className="text-xs text-gray-400 dark:text-gray-400 light:text-gray-600">{item.label}</div>
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-lg font-bold text-white">{item.value.toFixed(1)}%</div>
+                  <div className="text-lg font-bold text-white dark:text-white light:text-gray-900">{item.value.toFixed(1)}%</div>
                 </div>
               </motion.div>
             ))}
@@ -1067,9 +1074,9 @@ function Step3SurfaceCoverage({ results }) {
       </div>
 
       {/* Analysis Insights */}
-      <div className="bg-[#7dd3ff]/10 border border-[#7dd3ff]/30 rounded-xl p-4">
-        <h4 className="text-[#7dd3ff] font-semibold mb-2">💡 Analysis Insights</h4>
-        <div className="text-sm text-gray-300 space-y-1">
+      <div className="bg-[#7dd3ff]/10 dark:bg-[#7dd3ff]/10 light:bg-[#7dd3ff]/20 border border-[#7dd3ff]/30 dark:border-[#7dd3ff]/30 light:border-[#7dd3ff]/50 rounded-xl p-4">
+        <h4 className="text-[#7dd3ff] dark:text-[#7dd3ff] light:text-[#1d4ed8] font-semibold mb-2">Analysis Insights</h4>
+        <div className="text-sm text-gray-300 dark:text-gray-300 light:text-gray-600 space-y-1">
           <p>• {results.surfaces.asphalt > 50 ? 'High' : results.surfaces.asphalt > 30 ? 'Moderate' : 'Low'} impermeable surface coverage detected</p>
           <p>• Vegetation coverage: {results.surfaces.greenery > 40 ? 'Excellent' : results.surfaces.greenery > 25 ? 'Good' : 'Limited'} natural drainage potential</p>
           <p>• Surface analysis completed using computer vision on 4-directional street view imagery</p>
@@ -1085,8 +1092,8 @@ function Step4Terrain({ results }) {
     return (
       <div className="space-y-6">
         <div>
-          <h2 className="text-2xl font-bold text-[#7dd3ff] mb-2">Terrain & Flood Risk Analysis</h2>
-          <p className="text-gray-300">Topographical characteristics and flood risk assessment</p>
+          <h2 className="text-2xl font-bold text-[#7dd3ff] dark:text-[#7dd3ff] light:text-[#1d4ed8] mb-2">Terrain & Flood Risk Analysis</h2>
+          <p className="text-gray-300 dark:text-gray-300 light:text-gray-600">Topographical characteristics and flood risk assessment</p>
         </div>
         <div className="p-8 bg-white/5 rounded-xl border border-white/10 flex items-center justify-center">
           <span className="text-gray-400">Awaiting analysis results...</span>
@@ -1106,35 +1113,35 @@ function Step4Terrain({ results }) {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold text-[#7dd3ff] mb-2">Terrain & Flood Risk Analysis</h2>
-        <p className="text-gray-300">Topographical characteristics and comprehensive flood risk assessment</p>
-      </div>
+        <div>
+          <h2 className="text-2xl font-bold text-[#7dd3ff] dark:text-[#7dd3ff] light:text-[#1d4ed8] mb-2">Terrain & Flood Risk Analysis</h2>
+          <p className="text-gray-300 dark:text-gray-300 light:text-gray-600">Topographical characteristics and comprehensive flood risk assessment</p>
+        </div>
 
       {/* Terrain Data */}
       <div className="grid grid-cols-2 gap-4">
         <div className="bg-blue-500/20 rounded-lg p-6">
-          <div className="text-3xl font-bold text-white">{results.elevation_m?.toFixed(1)}m</div>
-          <div className="text-sm text-gray-300">Elevation</div>
+          <div className="text-3xl font-bold text-white dark:text-white light:text-gray-900">{results.elevation_m?.toFixed(1)}m</div>
+          <div className="text-sm text-gray-300 dark:text-gray-300 light:text-gray-600">Elevation</div>
         </div>
         <div className="bg-yellow-500/20 rounded-lg p-6">
-          <div className="text-3xl font-bold text-white">{results.slope_pct?.toFixed(2)}%</div>
-          <div className="text-sm text-gray-300">Slope</div>
+          <div className="text-3xl font-bold text-white dark:text-white light:text-gray-900">{results.slope_pct?.toFixed(2)}%</div>
+          <div className="text-sm text-gray-300 dark:text-gray-300 light:text-gray-600">Slope</div>
         </div>
       </div>
 
       {/* Flood Risk Assessment */}
       {results.risk && (
-        <div className="bg-white/5 rounded-xl border border-white/10 p-6">
-          <h3 className="text-lg font-semibold text-white mb-4 flex items-center">
-            <svg className="w-6 h-6 mr-2 text-[#7dd3ff]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="bg-white/5 dark:bg-white/5 light:bg-white rounded-xl border border-white/10 dark:border-white/10 light:border-gray-200 p-6">
+          <h3 className="text-lg font-semibold text-white dark:text-white light:text-gray-900 mb-4 flex items-center">
+            <svg className="w-6 h-6 mr-2 text-[#7dd3ff] dark:text-[#7dd3ff] light:text-[#1d4ed8]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
-            🎯 Flood Risk Assessment
+            Flood Risk Assessment
           </h3>
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Circular Gauge */}
-            <div className="flex flex-col items-center justify-center bg-black/20 rounded-xl p-6">
+            <div className="flex flex-col items-center justify-center bg-black/20 dark:bg-black/20 light:bg-gray-100 rounded-xl p-6">
               <CircularGauge
                 value={results.risk.score}
                 max={100}
@@ -1156,13 +1163,13 @@ function Step4Terrain({ results }) {
 
             {/* Risk Details */}
             <div className="space-y-4">
-              <h4 className="text-white font-semibold">Risk Factors</h4>
+              <h4 className="text-white dark:text-white light:text-gray-900 font-semibold">Risk Factors</h4>
               
               {/* Risk Factor Breakdown */}
               <div className="space-y-3">
-                <div className="bg-black/20 rounded-lg p-3">
+                <div className="bg-black/20 dark:bg-black/20 light:bg-gray-100 rounded-lg p-3">
                   <div className="flex justify-between items-center mb-2">
-                    <span className="text-sm text-gray-300">Impermeable Surface</span>
+                    <span className="text-sm text-gray-300 dark:text-gray-300 light:text-gray-700">Impermeable Surface</span>
                     <span className="text-blue-400 font-bold">{results.surfaces?.asphalt?.toFixed(1)}%</span>
                   </div>
                   <div className="w-full bg-gray-700 rounded-full h-2">
@@ -1176,9 +1183,9 @@ function Step4Terrain({ results }) {
                   </div>
                 </div>
                 
-                <div className="bg-black/20 rounded-lg p-3">
+                <div className="bg-black/20 dark:bg-black/20 light:bg-gray-100 rounded-lg p-3">
                   <div className="flex justify-between items-center mb-2">
-                    <span className="text-sm text-gray-300">Vegetation Coverage</span>
+                    <span className="text-sm text-gray-300 dark:text-gray-300 light:text-gray-700">Vegetation Coverage</span>
                     <span className="text-green-400 font-bold">{results.surfaces?.greenery?.toFixed(1)}%</span>
                   </div>
                   <div className="w-full bg-gray-700 rounded-full h-2">
@@ -1192,9 +1199,9 @@ function Step4Terrain({ results }) {
                   </div>
                 </div>
                 
-                <div className="bg-black/20 rounded-lg p-3">
+                <div className="bg-black/20 dark:bg-black/20 light:bg-gray-100 rounded-lg p-3">
                   <div className="flex justify-between items-center mb-2">
-                    <span className="text-sm text-gray-300">24h Rainfall</span>
+                    <span className="text-sm text-gray-300 dark:text-gray-300 light:text-gray-700">24h Rainfall</span>
                     <span className="text-yellow-400 font-bold">{results.rainfall_mm?.toFixed(1)}mm</span>
                   </div>
                   <div className="w-full bg-gray-700 rounded-full h-2">
@@ -1214,9 +1221,9 @@ function Step4Terrain({ results }) {
       )}
 
       {/* Terrain Analysis Insights */}
-      <div className="bg-[#7dd3ff]/10 border border-[#7dd3ff]/30 rounded-xl p-4">
-        <h4 className="text-[#7dd3ff] font-semibold mb-2">🏔️ Terrain Analysis Summary</h4>
-        <div className="text-sm text-gray-300 space-y-1">
+      <div className="bg-[#7dd3ff]/10 dark:bg-[#7dd3ff]/10 light:bg-[#7dd3ff]/20 border border-[#7dd3ff]/30 dark:border-[#7dd3ff]/30 light:border-[#7dd3ff]/50 rounded-xl p-4">
+        <h4 className="text-[#7dd3ff] dark:text-[#7dd3ff] light:text-[#1d4ed8] font-semibold mb-2">Terrain Analysis Summary</h4>
+        <div className="text-sm text-gray-300 dark:text-gray-300 light:text-gray-600 space-y-1">
           <p>• Elevation: {results.elevation_m > 100 ? 'High ground advantage' : results.elevation_m > 50 ? 'Moderate elevation' : 'Low-lying area - increased flood risk'}</p>
           <p>• Slope: {results.slope_pct > 5 ? 'Good natural drainage' : results.slope_pct > 2 ? 'Moderate drainage potential' : 'Poor natural drainage - water pooling likely'}</p>
           {results.risk && (
@@ -1236,8 +1243,8 @@ function Step5FloodRisk({ results }) {
     return (
       <div className="space-y-6">
         <div>
-          <h2 className="text-2xl font-bold text-[#7dd3ff] mb-2">Actions & Safety Recommendations</h2>
-          <p className="text-gray-300">Infrastructure planning and community safety measures</p>
+          <h2 className="text-2xl font-bold text-[#7dd3ff] dark:text-[#7dd3ff] light:text-[#1d4ed8] mb-2">Actions & Safety Recommendations</h2>
+          <p className="text-gray-300 dark:text-gray-300 light:text-gray-600">Infrastructure planning and community safety measures</p>
         </div>
         <div className="p-8 bg-white/5 rounded-xl border border-white/10 flex items-center justify-center">
           <div className="text-center">
@@ -1278,32 +1285,32 @@ function Step5FloodRisk({ results }) {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold text-[#7dd3ff] mb-2">Actions & Safety Recommendations</h2>
-        <p className="text-gray-300">Comprehensive planning and emergency response strategies</p>
-      </div>
+        <div>
+          <h2 className="text-2xl font-bold text-[#7dd3ff] dark:text-[#7dd3ff] light:text-[#1d4ed8] mb-2">Actions & Safety Recommendations</h2>
+          <p className="text-gray-300 dark:text-gray-300 light:text-gray-600">Comprehensive planning and emergency response strategies</p>
+        </div>
 
       {/* Tab Navigation */}
-      <div className="flex bg-white/5 rounded-lg p-1">
+      <div className="flex bg-white/5 dark:bg-white/5 light:bg-gray-100 rounded-lg p-1">
         <button
           onClick={() => setActiveTab('infrastructure')}
           className={`flex-1 py-3 px-4 rounded-md text-sm font-medium transition-all duration-300 ${
             activeTab === 'infrastructure'
               ? 'bg-[#7dd3ff] text-gray-900'
-              : 'text-gray-300 hover:text-white hover:bg-white/10'
+              : 'text-gray-300 dark:text-gray-300 light:text-gray-700 hover:text-white dark:hover:text-white light:hover:text-gray-900 hover:bg-white/10 dark:hover:bg-white/10 light:hover:bg-gray-200'
           }`}
         >
-          🏗️ Infrastructure Actions
+          Infrastructure Actions
         </button>
         <button
           onClick={() => setActiveTab('community')}
           className={`flex-1 py-3 px-4 rounded-md text-sm font-medium transition-all duration-300 ${
             activeTab === 'community'
               ? 'bg-[#7dd3ff] text-gray-900'
-              : 'text-gray-300 hover:text-white hover:bg-white/10'
+              : 'text-gray-300 dark:text-gray-300 light:text-gray-700 hover:text-white dark:hover:text-white light:hover:text-gray-900 hover:bg-white/10 dark:hover:bg-white/10 light:hover:bg-gray-200'
           }`}
         >
-          👥 Community Safety
+          Community Safety
         </button>
       </div>
 
@@ -1313,7 +1320,7 @@ function Step5FloodRisk({ results }) {
           {/* Intervention Cards */}
           {results.recommendation?.interventions && (
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-white">🛠️ Recommended Infrastructure Interventions</h3>
+              <h3 className="text-lg font-semibold text-white dark:text-white light:text-gray-900">Recommended Infrastructure Interventions</h3>
               {results.recommendation.interventions.map((intervention, index) => (
                 <motion.div 
                   key={index}
@@ -1402,7 +1409,7 @@ function Step5FloodRisk({ results }) {
               transition={{ delay: 1 }}
               className="bg-gradient-to-br from-[#7dd3ff]/20 to-[#60a5fa]/20 border-2 border-[#7dd3ff]/30 rounded-xl p-6"
             >
-              <h3 className="text-xl font-bold text-[#7dd3ff] mb-4 flex items-center">
+              <h3 className="text-xl font-bold text-[#7dd3ff] dark:text-[#7dd3ff] light:text-[#1d4ed8] mb-4 flex items-center">
                 <svg className="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                 </svg>
@@ -1435,7 +1442,7 @@ function Step5FloodRisk({ results }) {
 
               {results.recommendation.community_summary && (
                 <div className="bg-white/5 rounded-lg p-4">
-                  <h4 className="text-[#7dd3ff] font-semibold mb-2">🏘️ Community Impact</h4>
+                  <h4 className="text-[#7dd3ff] dark:text-[#7dd3ff] light:text-[#1d4ed8] font-semibold mb-2">Community Impact</h4>
                   <p className="text-gray-300 text-sm leading-relaxed">{results.recommendation.community_summary}</p>
                 </div>
               )}
@@ -1447,24 +1454,24 @@ function Step5FloodRisk({ results }) {
       {/* Community Safety Tab */}
       {activeTab === 'community' && (
         <div className="space-y-4">
-          <h3 className="text-lg font-semibold text-white">🚨 Emergency Response & Safety Actions</h3>
+          <h3 className="text-lg font-semibold text-white dark:text-white light:text-gray-900">Emergency Response & Safety Actions</h3>
           
           {/* Evacuation Route */}
-          <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-6">
-            <h4 className="text-red-300 font-semibold mb-3 flex items-center">
+          <div className="bg-red-500/10 dark:bg-red-500/10 light:bg-red-100 border border-red-500/30 dark:border-red-500/30 light:border-red-300 rounded-xl p-6">
+            <h4 className="text-red-300 dark:text-red-300 light:text-red-700 font-semibold mb-3 flex items-center">
               <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
               </svg>
-              🚨 Emergency Evacuation Route
+              Emergency Evacuation Route
             </h4>
-            <p className="text-red-200 text-sm mb-4">
+            <p className="text-red-200 dark:text-red-200 light:text-red-600 text-sm mb-4">
               In case of severe flooding, evacuate immediately to higher ground or designated evacuation centers.
             </p>
             <div className="flex items-center space-x-4">
               <div className="flex-1">
-                <p className="text-white font-medium">Recommended Destination:</p>
-                <p className="text-red-200 text-sm">{evacuationRoute.name}</p>
+                <p className="text-white dark:text-white light:text-gray-900 font-medium">Recommended Destination:</p>
+                <p className="text-red-200 dark:text-red-200 light:text-red-600 text-sm">{evacuationRoute.name}</p>
               </div>
               <a
                 href={evacuationRoute.url}
@@ -1483,14 +1490,14 @@ function Step5FloodRisk({ results }) {
           {/* Safety Recommendations */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Shelter-in-Place */}
-            <div className="bg-orange-500/10 border border-orange-500/30 rounded-xl p-4">
-              <h4 className="text-orange-300 font-semibold mb-3 flex items-center">
+            <div className="bg-orange-500/10 dark:bg-orange-500/10 light:bg-orange-100 border border-orange-500/30 dark:border-orange-500/30 light:border-orange-300 rounded-xl p-4">
+              <h4 className="text-orange-300 dark:text-orange-300 light:text-orange-700 font-semibold mb-3 flex items-center">
                 <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2H5a2 2 0 00-2-2v0" />
                 </svg>
-                🏠 Shelter-in-Place
+                Shelter-in-Place
               </h4>
-              <ul className="text-orange-200 text-sm space-y-2">
+              <ul className="text-orange-200 dark:text-orange-200 light:text-orange-600 text-sm space-y-2">
                 <li>• Move to upper floors if flooding begins</li>
                 <li>• Store emergency supplies (water, food, flashlight)</li>
                 <li>• Stay away from windows during storms</li>
@@ -1500,14 +1507,14 @@ function Step5FloodRisk({ results }) {
             </div>
 
             {/* Vehicle Safety */}
-            <div className="bg-blue-500/10 border border-blue-500/30 rounded-xl p-4">
-              <h4 className="text-blue-300 font-semibold mb-3 flex items-center">
+            <div className="bg-blue-500/10 dark:bg-blue-500/10 light:bg-blue-100 border border-blue-500/30 dark:border-blue-500/30 light:border-blue-300 rounded-xl p-4">
+              <h4 className="text-blue-300 dark:text-blue-300 light:text-blue-700 font-semibold mb-3 flex items-center">
                 <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
                 </svg>
-                🚗 Vehicle & Travel Safety
+                Vehicle & Travel Safety
               </h4>
-              <ul className="text-blue-200 text-sm space-y-2">
+              <ul className="text-blue-200 dark:text-blue-200 light:text-blue-600 text-sm space-y-2">
                 <li>• Never drive through standing water</li>
                 <li>• Avoid low-lying roads and underpasses</li>
                 <li>• Turn around at flooded roadways</li>
@@ -1517,14 +1524,14 @@ function Step5FloodRisk({ results }) {
             </div>
 
             {/* Communication Plan */}
-            <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-4">
-              <h4 className="text-green-300 font-semibold mb-3 flex items-center">
+            <div className="bg-green-500/10 dark:bg-green-500/10 light:bg-green-100 border border-green-500/30 dark:border-green-500/30 light:border-green-300 rounded-xl p-4">
+              <h4 className="text-green-300 dark:text-green-300 light:text-green-700 font-semibold mb-3 flex items-center">
                 <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
                 </svg>
-                📱 Communication Plan
+                Communication Plan
               </h4>
-              <ul className="text-green-200 text-sm space-y-2">
+              <ul className="text-green-200 dark:text-green-200 light:text-green-600 text-sm space-y-2">
                 <li>• Establish family meeting points</li>
                 <li>• Share emergency contact information</li>
                 <li>• Sign up for local emergency alerts</li>
@@ -1534,14 +1541,14 @@ function Step5FloodRisk({ results }) {
             </div>
 
             {/* Community Resources */}
-            <div className="bg-purple-500/10 border border-purple-500/30 rounded-xl p-4">
-              <h4 className="text-purple-300 font-semibold mb-3 flex items-center">
+            <div className="bg-purple-500/10 dark:bg-purple-500/10 light:bg-purple-100 border border-purple-500/30 dark:border-purple-500/30 light:border-purple-300 rounded-xl p-4">
+              <h4 className="text-purple-300 dark:text-purple-300 light:text-purple-700 font-semibold mb-3 flex items-center">
                 <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                 </svg>
-                🤝 Community Resources
+                Community Resources
               </h4>
-              <ul className="text-purple-200 text-sm space-y-2">
+              <ul className="text-purple-200 dark:text-purple-200 light:text-purple-600 text-sm space-y-2">
                 <li>• Know your neighbors and check on elderly</li>
                 <li>• Locate nearest emergency shelters</li>
                 <li>• Identify community leaders and volunteers</li>
@@ -1566,7 +1573,7 @@ function Step5FloodRisk({ results }) {
                 <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.732-.833-2.5 0L4.268 6.5c-.77.833-.192 2.5 1.732 2.5z" />
                 </svg>
-                ⚠️ {results.risk.level} Risk Area Actions
+                {results.risk.level} Risk Area Actions
               </h4>
               <div className={`text-sm space-y-2 ${
                 results.risk.level === 'HIGH' ? 'text-red-200' :
