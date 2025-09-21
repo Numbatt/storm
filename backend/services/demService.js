@@ -125,15 +125,15 @@ class DEMService {
     const bounds = this.convertUTMBoundsToWGS84();
     const points = [];
 
-    // Stratified sampling strategy:
-    // 70% in low elevation areas (<10m) - flood prone
-    // 20% in medium elevation areas (10-20m) - moderate risk
-    // 10% in high elevation areas (>20m) - lower risk
-    const lowElevPoints = Math.floor(numPoints * 0.7);
-    const medElevPoints = Math.floor(numPoints * 0.2);
+    // UPDATED: More balanced elevation sampling strategy to fix bias:
+    // 40% in low elevation areas (<10m) - flood prone
+    // 40% in medium elevation areas (10-20m) - moderate risk
+    // 20% in high elevation areas (>20m) - lower risk
+    const lowElevPoints = Math.floor(numPoints * 0.4);
+    const medElevPoints = Math.floor(numPoints * 0.4);
     const highElevPoints = numPoints - lowElevPoints - medElevPoints;
 
-    console.log(`Intelligent sampling: ${lowElevPoints} low, ${medElevPoints} medium, ${highElevPoints} high elevation points`);
+    console.log(`Balanced sampling strategy: ${lowElevPoints} low, ${medElevPoints} medium, ${highElevPoints} high elevation points`);
 
     let pointId = 1;
     const maxAttempts = numPoints * 3; // Prevent infinite loops
