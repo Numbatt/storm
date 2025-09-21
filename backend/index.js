@@ -255,15 +255,7 @@ app.post('/api/flood-analysis/analyze', async (req, res) => {
       });
     }
 
-    // Check if processed images exist for these coordinates
-    const hasImages = floodAnalysisService.hasProcessedImages(lat, lon);
-    if (!hasImages) {
-      return res.status(404).json({
-        error: 'No processed images available for these coordinates',
-        message: 'Use /api/flood-analysis/coordinates to see available locations',
-        coordinates: { lat, lon }
-      });
-    }
+    // Note: Removed cache checking - streetview.py will fetch fresh images every time
 
     // Prepare options
     const options = {};

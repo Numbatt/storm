@@ -97,19 +97,19 @@ class StreetViewFetcher:
                     f.write(response.content)
                 
                 saved_images.append(filepath)
-                print(f"   ✅ Saved: {filename}")
+                print(f"   Saved: {filename}")
                 
             except requests.RequestException as e:
-                print(f"   ❌ Failed to download {filename}: {e}")
+                print(f"   Failed to download {filename}: {e}")
                 continue
             except Exception as e:
-                print(f"   ❌ Error processing {filename}: {e}")
+                print(f"   Error processing {filename}: {e}")
                 continue
         
         if not saved_images:
             raise RuntimeError(f"Failed to fetch any Street View images for {lat}, {lon}")
         
-        print(f"✅ Successfully fetched {len(saved_images)}/4 Street View images")
+        print(f"Successfully fetched {len(saved_images)}/4 Street View images")
         return saved_images
     
     def check_api_quota(self) -> dict:

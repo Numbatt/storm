@@ -235,7 +235,16 @@ function StormAnalysisContent() {
       console.log('✅ Storm analysis completed successfully')
     } catch (err) {
       console.error('❌ Storm analysis failed:', err)
-      setError(err.message || 'Analysis failed. Please try again.')
+      
+      // Check for Street View specific errors
+      const errorMessage = err.message || 'Analysis failed. Please try again.'
+      if (errorMessage.includes('Street View') || errorMessage.includes('streetview') || 
+          errorMessage.includes('fetch fresh') || errorMessage.includes('Google')) {
+        setError('⚠️ Could not fetch Google Street View imagery. This may be due to invalid coordinates, API quota limits, or no Street View coverage in this area. Please try different coordinates.')
+      } else {
+        setError(errorMessage)
+      }
+      
       setIsAnalyzing(false)
     }
   }

@@ -73,38 +73,25 @@ def analyze_flood_risk(lat: float, lon: float, rainfall: float = 25.0,
         recommender = FloodMitigationRecommender()
         ai_insights_generator = AIInsightsGenerator() if AIInsightsGenerator else None
     
-    # Check for existing images
+    # Always fetch fresh images using Street View API - no cache dependency
     data_dir = os.path.join(os.path.dirname(__file__), "data", "processed")
-    image_paths = [
-        os.path.join(data_dir, f"{lat}_{lon}_0.jpg"),
-        os.path.join(data_dir, f"{lat}_{lon}_90.jpg"),
-        os.path.join(data_dir, f"{lat}_{lon}_180.jpg"),
-        os.path.join(data_dir, f"{lat}_{lon}_270.jpg")
-    ]
     
-    existing_images = [img for img in image_paths if os.path.exists(img)]
+    if not debug and not json_mode:
+        print(f"📸 Fetching fresh images from Google Street View for {lat}, {lon}...")
     
-    if not existing_images:
-        # Try to fetch images using Street View API
-        if not debug and not json_mode:
-            print(f"📸 No local images found. Fetching from Google Street View...")
-        
-        try:
-            if json_mode:
-                with redirect_stdout(StringIO()):
-                    streetview_fetcher = StreetViewFetcher(config_path)
-                    fetched_images = streetview_fetcher.fetch_images(lat, lon, data_dir)
-            else:
+    try:
+        if json_mode:
+            with redirect_stdout(StringIO()):
                 streetview_fetcher = StreetViewFetcher(config_path)
-                fetched_images = streetview_fetcher.fetch_images(lat, lon, data_dir)
-            
-            existing_images = fetched_images
-            
-        except Exception as e:
-            raise FileNotFoundError(
-                f"No images found for coordinates {lat}, {lon} and failed to fetch from Street View: {e}. "
-                f"Expected files: {[os.path.basename(img) for img in image_paths]}"
-            )
+                existing_images = streetview_fetcher.fetch_images(lat, lon, data_dir)
+        else:
+            streetview_fetcher = StreetViewFetcher(config_path)
+            existing_images = streetview_fetcher.fetch_images(lat, lon, data_dir)
+        
+    except Exception as e:
+        raise FileNotFoundError(
+            f"Failed to fetch fresh Street View images for coordinates {lat}, {lon}: {e}"
+        )
     
     if not debug and not json_mode:
         print(f"📸 Using Mask2Former with {len(existing_images)} local images...")

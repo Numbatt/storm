@@ -238,27 +238,7 @@ class FloodAnalysisService {
     }
   }
 
-  /**
-   * Validate if coordinates have processed images available
-   * @param {number} lat - Latitude
-   * @param {number} lon - Longitude
-   * @returns {boolean} True if images are available
-   */
-  hasProcessedImages(lat, lon) {
-    const fs = require('fs');
-    const dataDir = path.join(this.apiPath, 'data', 'processed');
-    
-    if (!fs.existsSync(dataDir)) {
-      return false;
-    }
-
-    // Check for all 4 angle images
-    const angles = [0, 90, 180, 270];
-    return angles.every(angle => {
-      const imagePath = path.join(dataDir, `${lat}_${lon}_${angle}.jpg`);
-      return fs.existsSync(imagePath);
-    });
-  }
+  // Note: hasProcessedImages method removed - streetview.py fetches fresh images every time
 }
 
 module.exports = FloodAnalysisService;
