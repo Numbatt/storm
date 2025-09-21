@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useSelector } from 'react-redux'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { selectRainfall, selectDuration, selectLoading, selectError, selectResults, selectStatistics } from './store/slices/simulationSlice'
 import FloodMap from './components/Map/FloodMap'
 import RainfallSlider from './components/Controls/RainfallSlider'
@@ -42,13 +42,42 @@ function App() {
 }
 
 const AppContent = ({ rainfall, duration, loading, error, results, statistics }) => {
+  const [isMobile, setIsMobile] = useState(false)
+  // Initialize collapsed state based on screen size
+  const [isCollapsed, setIsCollapsed] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.innerWidth < 768
+    }
+    return false
+  })
+
+  // Check if device is mobile on mount and resize
+  useEffect(() => {
+    const checkMobile = () => {
+      const isMobileDevice = window.innerWidth < 768
+      setIsMobile(isMobileDevice)
+      // Auto-collapse on mobile for better map visibility
+      if (isMobileDevice) {
+        setIsCollapsed(true)
+      }
+    }
+
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
+
+  const toggleCollapse = () => {
+    setIsCollapsed(!isCollapsed)
+  }
+
   return (
     <div className="h-screen w-screen bg-gradient-to-br from-gray-900 via-black to-gray-800 dark:from-gray-900 dark:via-black dark:to-gray-800 light:from-gray-50 light:via-white light:to-gray-100 text-white dark:text-white light:text-gray-900 overflow-hidden flex flex-col">
       {/* Header */}
       <motion.header 
-        initial={{ y: -100, opacity: 0 }}
+        initial={{ y: -50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.8, ease: "easeOut" }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
         className="relative z-30 bg-black/20 dark:bg-black/20 light:bg-white/80 backdrop-blur-md border-b border-white/10 dark:border-white/10 light:border-gray-200 p-4"
       >
         <div className="flex items-center justify-between max-w-7xl mx-auto">
@@ -70,13 +99,13 @@ const AppContent = ({ rainfall, duration, loading, error, results, statistics })
       </motion.header>
 
       {/* Main Content */}
-      <main className="flex-1 flex relative min-h-0">
-        {/* Map Area */}
+      <main className="flex-1 relative min-h-0">
+        {/* Map Area - Always Fullscreen */}
         <motion.div 
-          initial={{ opacity: 0, scale: 0.95 }}
+          initial={{ opacity: 0, scale: 0.98 }}
           animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 1, delay: 0.3 }}
-          className="flex-1 relative min-h-0"
+          transition={{ duration: 0.6, delay: 0.1, ease: "easeOut" }}
+          className="absolute inset-0 z-10"
         >
           <FloodMap />
           
@@ -84,19 +113,73 @@ const AppContent = ({ rainfall, duration, loading, error, results, statistics })
           <div className="absolute inset-0 bg-gradient-to-r from-transparent via-transparent to-black/10 pointer-events-none z-0" />
         </motion.div>
 
-        {/* Control Panel */}
-        <motion.aside 
-          initial={{ x: 100, opacity: 0 }}
-          animate={{ x: 0, opacity: 1 }}
-          transition={{ duration: 0.8, delay: 0.5 }}
-          className="w-80 bg-black/40 dark:bg-black/40 light:bg-white/90 backdrop-blur-xl border-l border-white/10 dark:border-white/10 light:border-gray-200 overflow-y-auto flex-shrink-0"
+        {/* Persistent Toggle Button */}
+        <motion.button
+          onClick={toggleCollapse}
+          className={`fixed top-1/2 -translate-y-1/2 z-50 bg-gradient-to-r from-[#51A3F0] to-[#99CBF7] hover:from-[#4A96E6] hover:to-[#8BC4F5] text-white shadow-lg border-0 ${
+            isCollapsed 
+              ? 'right-0 rounded-l-lg px-3 py-4' 
+              : 'right-80 rounded-r-lg px-3 py-3'
+          }`}
+          animate={{
+            right: isCollapsed ? 0 : 320
+          }}
+          transition={{
+            type: "spring",
+            stiffness: 500,
+            damping: 35,
+            mass: 0.6
+          }}
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          aria-label={isCollapsed ? 'Expand control panel' : 'Collapse control panel'}
         >
-          <div className="p-6">
-            <h2 className="text-xl font-light mb-8 text-white dark:text-white light:text-gray-900">
-              <span className="bg-gradient-to-r from-[#51A3F0] to-[#99CBF7] bg-clip-text text-transparent">
-                Simulation Controls
-              </span>
-            </h2>
+          <svg 
+            className={`w-5 h-5 transition-transform duration-150 ease-out ${
+              isCollapsed ? '' : 'rotate-180'
+            }`} 
+            fill="none" 
+            stroke="currentColor" 
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+        </motion.button>
+
+        {/* Control Panel - Fixed Overlay */}
+        <AnimatePresence mode="wait">
+          {!isCollapsed && (
+            <motion.aside 
+              initial={{ x: 320, opacity: 0 }}
+              animate={{ x: 0, opacity: 1 }}
+              exit={{ x: 320, opacity: 0 }}
+              transition={{ 
+                type: "spring", 
+                stiffness: 400, 
+                damping: 30,
+                mass: 0.8
+              }}
+              className="fixed right-0 top-0 h-full w-80 bg-black/40 dark:bg-black/40 light:bg-white/90 backdrop-blur-xl border-l border-white/10 dark:border-white/10 light:border-gray-200 overflow-y-auto z-40"
+            >
+              {/* Panel Header with Collapse Button */}
+              <div className="flex items-center justify-between p-6 pb-4 border-b border-white/10 dark:border-white/10 light:border-gray-200">
+                <h2 className="text-xl font-light text-white dark:text-white light:text-gray-900">
+                  <span className="bg-gradient-to-r from-[#51A3F0] to-[#99CBF7] bg-clip-text text-transparent">
+                    Simulation Controls
+                  </span>
+                </h2>
+                <button
+                  onClick={toggleCollapse}
+                  className="lg:hidden p-2 rounded-lg hover:bg-white/10 dark:hover:bg-white/10 light:hover:bg-gray-200 transition-colors"
+                  aria-label="Close control panel"
+                >
+                  <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+
+              <div className="p-6 pt-4">
 
             {error && (
               <motion.div 
@@ -122,9 +205,9 @@ const AppContent = ({ rainfall, duration, loading, error, results, statistics })
 
             {/* Current Parameters */}
             <motion.div 
-              initial={{ y: 20, opacity: 0 }}
+              initial={{ y: 10, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ delay: 1 }}
+              transition={{ delay: 0.2, duration: 0.3 }}
               className="mt-8 p-6 bg-gradient-to-br from-[#51A3F0]/10 to-[#99CBF7]/10 dark:from-[#51A3F0]/10 dark:to-[#99CBF7]/10 light:from-[#51A3F0]/20 light:to-[#99CBF7]/20 rounded-xl border border-white/10 dark:border-white/10 light:border-gray-200 backdrop-blur-sm"
             >
               <h3 className="text-sm font-medium text-[#99CBF7] dark:text-[#99CBF7] light:text-[#51A3F0] mb-3 flex items-center">
@@ -141,9 +224,9 @@ const AppContent = ({ rainfall, duration, loading, error, results, statistics })
             {/* Simulation Results */}
             {results && statistics && (
               <motion.div 
-                initial={{ y: 20, opacity: 0 }}
+                initial={{ y: 10, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
-                transition={{ delay: 1.2 }}
+                transition={{ delay: 0.3, duration: 0.3 }}
                 className="mt-6 p-6 bg-gradient-to-br from-[#99CBF7]/10 to-[#E0F1FF]/10 dark:from-[#99CBF7]/10 dark:to-[#E0F1FF]/10 light:from-[#99CBF7]/20 light:to-[#E0F1FF]/20 rounded-xl border border-white/10 dark:border-white/10 light:border-gray-200 backdrop-blur-sm"
               >
                 <h3 className="text-sm font-medium text-[#E0F1FF] dark:text-[#E0F1FF] light:text-[#51A3F0] mb-3 flex items-center">
@@ -172,8 +255,23 @@ const AppContent = ({ rainfall, duration, loading, error, results, statistics })
                 </div>
               </motion.div>
             )}
-          </div>
-        </motion.aside>
+              </div>
+            </motion.aside>
+          )}
+        </AnimatePresence>
+
+        {/* Mobile Overlay - Behind Panel */}
+        {isMobile && !isCollapsed && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.15 }}
+            className="fixed inset-0 bg-black/50 z-30"
+            onClick={toggleCollapse}
+            aria-hidden="true"
+          />
+        )}
       </main>
     </div>
   )

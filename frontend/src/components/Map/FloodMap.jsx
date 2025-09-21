@@ -12,8 +12,8 @@ const FloodMap = () => {
   const results = useSelector(selectResults)
   const loading = useSelector(selectLoading)
   
-  // Fifth Ward Houston coordinates
-  const fifthWardCenter = [29.760, -95.365]
+  // Fifth Ward Houston coordinates - centered on Fifth Ward neighborhood
+  const fifthWardCenter = [29.77674000139737, -95.32701175952177]
 
   // Dark theme tile layer (CartoDB Dark)
   const darkTileLayer = {
@@ -48,6 +48,7 @@ const FloodMap = () => {
         keyboard={true}
         preferCanvas={false}
         worldCopyJump={false}
+        attributionControl={false}
       >
         <TileLayer
           attribution={currentTileLayer.attribution}
