@@ -11,6 +11,8 @@ Create an accessible, web-based flood risk assessment tool that empowers Houston
 - **Performance**: Simulations complete in under 10 seconds
 - **Educational Value**: AI explanations help users understand flood risk factors
 - **Accessibility**: Works on desktop and tablet devices
+- **Interactive Inspection**: Shift+hover coordinate inspection is accurate and responsive
+- **Risk Assessment Tools**: Shift+click risk assessment provides detailed location analysis
 
 ### Target Users
 1. **Primary**: Fifth Ward residents seeking to understand flood risk for their properties
@@ -52,7 +54,9 @@ App
 ├── MapContainer
 │   ├── FloodMap (Leaflet.js integration)
 │   ├── RiskMarkerLayer
-│   └── MarkerCluster
+│   ├── MarkerCluster
+│   ├── CoordinateInspector (Shift+hover overlay)
+│   └── RiskAssessmentPopup (Shift+click window)
 ├── ControlPanel
 │   ├── RainfallSlider (0-20 inches)
 │   ├── DurationSlider (0.5-8 hours)

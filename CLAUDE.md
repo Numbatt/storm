@@ -22,7 +22,9 @@ This is a web application that simulates flood risk in Houston's Fifth Ward usin
 2. **Simulation Controls**: Rainfall amount (0-20 inches) and duration (0.5-8 hours) sliders
 3. **Risk Assessment**: Color-coded markers (Red=High, Yellow=Moderate, Green=Low risk)
 4. **Marker Clustering**: Intelligent spatial grouping to reduce visual clutter
-5. **AI Explanations**: NVIDIA NIM-generated explanations for each risk marker
+5. **Coordinate Inspection**: Shift+hover to view coordinates, elevation, and flood risk data
+6. **Interactive Risk Assessment**: Shift+click to open risk assessment window with detailed analysis
+7. **AI Explanations**: NVIDIA NIM-generated explanations for each risk marker
 
 ## File Structure
 ```
@@ -33,7 +35,9 @@ flood-simulation-app/
 │   │   │   ├── Map/
 │   │   │   │   ├── FloodMap.jsx
 │   │   │   │   ├── RiskMarker.jsx
-│   │   │   │   └── MarkerCluster.jsx
+│   │   │   │   ├── MarkerCluster.jsx
+│   │   │   │   ├── CoordinateInspector.jsx
+│   │   │   │   └── RiskAssessmentPopup.jsx
 │   │   │   ├── Controls/
 │   │   │   │   ├── SimulationControls.jsx
 │   │   │   │   ├── RainfallSlider.jsx
@@ -154,6 +158,9 @@ Location: Fifth Ward, Houston near {nearbyFeatures}
 - Implement React state management for simulation parameters
 - Create reusable components for sliders and map markers
 - Handle async operations with proper loading states
+- Implement coordinate inspection with Shift+hover for real-time coordinate display
+- Create interactive risk assessment with Shift+click popup windows
+- Ensure proper event handling and cleanup for keyboard/mouse interactions
 
 ### Backend Development
 - Process DEM data server-side only (not for visualization)

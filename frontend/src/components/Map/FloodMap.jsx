@@ -3,21 +3,17 @@ import { useSelector } from 'react-redux'
 import { useTheme } from '../../contexts/ThemeContext'
 import { selectResults, selectLoading } from '../../store/slices/simulationSlice'
 import MarkerCluster from './MarkerCluster'
+import CoordinateInspector from './CoordinateInspector'
+import RiskAssessmentPopup from './RiskAssessmentPopup'
 import 'leaflet/dist/leaflet.css'
-import 'react-leaflet-cluster/dist/assets/MarkerCluster.css'
-import 'react-leaflet-cluster/dist/assets/MarkerCluster.Default.css'
 
 const FloodMap = () => {
   const { isDark } = useTheme()
   const results = useSelector(selectResults)
   const loading = useSelector(selectLoading)
   
-  // Fifth Ward Houston coordinates
-  const fifthWardCenter = [29.760, -95.365]
-  const fifthWardBounds = [
-    [29.745, -95.380], // Southwest corner
-    [29.775, -95.350]  // Northeast corner
-  ]
+  // Fifth Ward Houston coordinates - centered on Fifth Ward neighborhood
+  const fifthWardCenter = [29.77674000139737, -95.32701175952177]
 
   // Dark theme tile layer (CartoDB Dark)
   const darkTileLayer = {
@@ -52,6 +48,7 @@ const FloodMap = () => {
         keyboard={true}
         preferCanvas={false}
         worldCopyJump={false}
+        attributionControl={false}
       >
         <TileLayer
           attribution={currentTileLayer.attribution}
@@ -64,6 +61,10 @@ const FloodMap = () => {
         {results && results.length > 0 && (
           <MarkerCluster markers={results} />
         )}
+
+        {/* Coordinate Inspection Features */}
+        <CoordinateInspector />
+        <RiskAssessmentPopup />
       </MapContainer>
 
       {/* Loading overlay */}
