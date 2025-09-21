@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useMap, useMapEvents } from 'react-leaflet'
 import { useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import { selectResults } from '../../store/slices/simulationSlice'
 import { getRiskColor } from '../../constants/colors'
 
@@ -11,6 +12,7 @@ const RiskAssessmentPopup = () => {
   const [isProcessing, setIsProcessing] = useState(false)
 
   const map = useMap()
+  const navigate = useNavigate()
   const results = useSelector(selectResults)
 
   // Handle keyboard events for Shift key
@@ -117,10 +119,11 @@ const RiskAssessmentPopup = () => {
       assessmentType: 'Manual Location Assessment'
     })
 
-    // Close popup after logging
+    // Close popup and navigate to storm analysis page
     setShowPopup(false)
     setPopupData(null)
     setIsProcessing(false)
+    navigate('/analysis-storm')
   }
 
   const handleClosePopup = () => {
