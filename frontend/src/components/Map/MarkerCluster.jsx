@@ -41,7 +41,9 @@ const MarkerCluster = ({ markers = [] }) => {
           return null
         }
 
-        const riskLevel = marker.risk_level || marker.riskLevel || 'low'
+        // Backend sends uppercase risk levels, convert to lowercase for icon mapping
+        const riskLevelRaw = marker.risk_level || marker.riskLevel || 'LOW'
+        const riskLevel = riskLevelRaw.toLowerCase()
         const icon = createRiskIcon(riskLevel)
 
         return (
@@ -51,38 +53,100 @@ const MarkerCluster = ({ markers = [] }) => {
             icon={icon}
           >
             <Popup>
-              <div className="p-2">
-                <h3 className="font-semibold text-sm mb-2">
-                  Risk Assessment
-                </h3>
-                <div className="space-y-1 text-xs">
+              <div className="p-3 min-w-[280px]">
+                <div className="flex items-center mb-3">
+                  <div className={`w-3 h-3 rounded-full mr-2 ${
+                    riskLevel === 'high' ? 'bg-red-500' :
+                    riskLevel === 'moderate' ? 'bg-yellow-500' :
+                    'bg-green-500'
+                  }`}></div>
+                  <h3 className="font-semibold text-sm">
+                    Flood Risk Assessment
+                  </h3>
+                </div>
+
+                <div className="space-y-2 text-xs">
                   <div className="flex justify-between">
-                    <span>Risk Level:</span>
-                    <span className={`font-medium ${
+                    <span className="text-gray-600">Risk Level:</span>
+                    <span className={`font-bold ${
                       riskLevel === 'high' ? 'text-red-600' :
-                      riskLevel === 'moderate' ? 'text-amber-600' :
+                      riskLevel === 'moderate' ? 'text-yellow-600' :
                       'text-green-600'
                     }`}>
                       {riskLevel.charAt(0).toUpperCase() + riskLevel.slice(1)}
                     </span>
                   </div>
+
+                  {marker.elevation !== undefined && (
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Elevation:</span>
+                      <span className="font-medium">{marker.elevation.toFixed(2)} m</span>
+                    </div>
+                  )}
+
+                  {marker.riskScore !== undefined && (
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Risk Score:</span>
+                      <span className="font-medium">{marker.riskScore.toFixed(3)}</span>
+                    </div>
+                  )}
+
+                  {marker.slope !== undefined && (
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Slope:</span>
+                      <span className="font-medium">{marker.slope.toFixed(2)}%</span>
+                    </div>
+                  )}
+
+                  {marker.proximityToWater !== undefined && (
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Water Proximity:</span>
+                      <span className="font-medium">{marker.proximityToWater.toFixed(2)}</span>
+                    </div>
+                  )}
+
+                  {marker.flowAccumulation !== undefined && marker.flowAccumulation > 0 && (
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Flow Accumulation:</span>
+                      <span className="font-medium">{marker.flowAccumulation.toFixed(1)}</span>
+                    </div>
+                  )}
+
+                  {marker.flowLength !== undefined && marker.flowLength > 0 && (
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Flow Length:</span>
+                      <span className="font-medium">{marker.flowLength.toFixed(1)} m</span>
+                    </div>
+                  )}
+
+                  {marker.drainageArea !== undefined && marker.drainageArea > 0 && (
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">Drainage Area:</span>
+                      <span className="font-medium">{marker.drainageArea.toFixed(1)}</span>
+                    </div>
+                  )}
+
                   {marker.depth && (
                     <div className="flex justify-between">
-                      <span>Depth:</span>
+                      <span className="text-gray-600">Est. Depth:</span>
                       <span className="font-medium">{marker.depth.toFixed(2)} ft</span>
                     </div>
                   )}
+
                   {marker.velocity && (
                     <div className="flex justify-between">
-                      <span>Velocity:</span>
+                      <span className="text-gray-600">Flow Velocity:</span>
                       <span className="font-medium">{marker.velocity.toFixed(2)} ft/s</span>
                     </div>
                   )}
-                  <div className="flex justify-between">
-                    <span>Coordinates:</span>
-                    <span className="font-mono text-xs">
-                      {lat.toFixed(4)}, {lng.toFixed(4)}
-                    </span>
+
+                  <div className="pt-2 border-t border-gray-200">
+                    <div className="flex justify-between">
+                      <span className="text-gray-500">Coordinates:</span>
+                      <span className="font-mono text-xs text-gray-700">
+                        {lat.toFixed(6)}, {lng.toFixed(6)}
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>

@@ -2,8 +2,9 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import ThemeToggle from '../components/ThemeToggle'
+import { LocationProvider, useLocation } from '../contexts/LocationContext'
 
-function RiskAnalysis() {
+function RiskAnalysisContent() {
   const [formData, setFormData] = useState({
     latitude: '',
     longitude: '',
@@ -12,6 +13,7 @@ function RiskAnalysis() {
   const [loading, setLoading] = useState(false)
   const [results, setResults] = useState(null)
   const [error, setError] = useState('')
+  const { currentLocation, isLoading: locationLoading } = useLocation()
 
   const roadTypes = [
     { value: 'residential', label: 'Residential Street' },
@@ -117,7 +119,6 @@ function RiskAnalysis() {
         <div className="flex items-center justify-between max-w-7xl mx-auto">
           <div>
             <h1 className="text-2xl font-light tracking-wide">
-              <span className="text-white">Fifth Ward </span>
               <span 
                 className="italic bg-gradient-to-r from-[#51A3F0] via-[#99CBF7] to-[#E0F1FF] bg-clip-text text-transparent"
                 style={{ fontFamily: 'Georgia, serif' }}
@@ -125,7 +126,22 @@ function RiskAnalysis() {
                 Risk Analysis
               </span>
             </h1>
-            <p className="text-sm text-gray-300 mt-1">Houston, Texas - Interactive Flood Risk Assessment</p>
+            <motion.p 
+              className="text-sm text-gray-300 mt-1"
+              key={currentLocation.fullName}
+              initial={{ opacity: 0.7 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.3 }}
+            >
+              {locationLoading ? (
+                <span className="flex items-center">
+                  <div className="w-3 h-3 border border-gray-400 border-t-transparent rounded-full animate-spin mr-2"></div>
+                  Detecting location...
+                </span>
+              ) : (
+                `${currentLocation.fullName} - Interactive Flood Risk Assessment`
+              )}
+            </motion.p>
           </div>
           
           <div className="flex items-center space-x-4">
@@ -222,7 +238,7 @@ function RiskAnalysis() {
                     onClick={() => setFormData(prev => ({ ...prev, latitude: '29.715820777907464', longitude: '-95.40178894546409' }))}
                     className="px-3 py-2 bg-white/10 hover:bg-white/20 border border-white/20 rounded-lg text-sm text-gray-300 hover:text-white transition-all duration-300"
                   >
-                    Fifth Ward Houston
+                    Houston
                   </button>
                   <button
                     type="button"
@@ -728,6 +744,14 @@ function ResultsDisplay({ results }) {
         </motion.div>
       )}
     </motion.div>
+  )
+}
+
+function RiskAnalysis() {
+  return (
+    <LocationProvider>
+      <RiskAnalysisContent />
+    </LocationProvider>
   )
 }
 

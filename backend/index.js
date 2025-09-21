@@ -5,6 +5,7 @@ const path = require('path');
 const DEMService = require('./services/demService');
 const RiskProcessor = require('./services/riskProcessor');
 const FloodAnalysisService = require('./services/floodAnalysisService');
+const { router: debugRouter, setServices } = require('./routes/debug');
 const AIInsightsService = require('./services/aiInsightsService');
 
 dotenv.config();
@@ -37,6 +38,18 @@ try {
   demService = new DEMService();
   riskProcessor = new RiskProcessor(demService);
   floodAnalysisService = new FloodAnalysisService();
+
+  // Set up debug routes with service access
+  setServices({
+    demService,
+    riskProcessor,
+    floodAnalysisService
+  });
+
+  // Add debug routes
+  app.use('/api/debug', debugRouter);
+
+  console.log('DEM, Risk Processing, and Flood Analysis services initialized successfully');
   aiInsightsService = new AIInsightsService();
   console.log('DEM, Risk Processing, Flood Analysis, and AI Insights services initialized successfully');
 } catch (error) {
@@ -431,12 +444,13 @@ app.use((req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`🚀 Fifth Ward Flood Simulation API running on port ${PORT}`);
-  console.log(`📊 Health check: http://localhost:${PORT}/api/health`);
-  console.log(`🌊 Flood analysis health: http://localhost:${PORT}/api/flood-analysis/health`);
-  console.log(`🤖 AI insights health: http://localhost:${PORT}/api/ai-insights/health`);
-  console.log(`📍 Available coordinates: http://localhost:${PORT}/api/flood-analysis/coordinates`);
-  console.log(`📁 Static files: http://localhost:${PORT}/static/results/`);
+  console.log(`Fifth Ward Flood Simulation API running on port ${PORT}`);
+  console.log(`Health check: http://localhost:${PORT}/api/health`);
+  console.log(`Flood analysis health: http://localhost:${PORT}/api/flood-analysis/health`);
+  console.log(`AI insights health: http://localhost:${PORT}/api/ai-insights/health`);
+  console.log(`Available coordinates: http://localhost:${PORT}/api/flood-analysis/coordinates`);
+  console.log(`Static files: http://localhost:${PORT}/static/results/`);
+  console.log(`Debug endpoints: http://localhost:${PORT}/api/debug/algorithm-summary`);
 });
 
 module.exports = app;

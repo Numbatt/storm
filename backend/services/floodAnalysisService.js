@@ -62,10 +62,10 @@ class FloodAnalysisService {
       }
 
       console.log(`Executing flood analysis for coordinates: ${lat}, ${lon}`);
-      console.log(`Command: python ${args.join(' ')}`);
+      console.log(`Command: python3 ${args.join(' ')}`);
 
       // Execute Python script
-      const python = spawn('python', args, {
+      const python = spawn('python3', args, {
         cwd: this.apiPath,
         stdio: ['ignore', 'pipe', 'pipe'],
         env: env
@@ -146,7 +146,7 @@ class FloodAnalysisService {
    */
   async healthCheck() {
     return new Promise((resolve) => {
-      const python = spawn('python', ['-c', 'import sys; print(sys.version)'], {
+      const python = spawn('python3', ['-c', 'import sys; print(sys.version)'], {
         cwd: this.apiPath,
         stdio: ['ignore', 'pipe', 'pipe']
       });

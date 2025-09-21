@@ -32,10 +32,10 @@ const DurationSlider = ({ min = 0.5, max = 8, step = 0.5 }) => {
           Storm Duration
         </div>
         <div className="group relative">
-          <svg className="w-4 h-4 text-gray-500 hover:text-gray-300 cursor-help" fill="currentColor" viewBox="0 0 20 20">
+          <svg className="w-4 h-4 text-gray-500 dark:text-gray-500 light:text-gray-400 hover:text-gray-300 dark:hover:text-gray-300 light:hover:text-gray-600 cursor-help" fill="currentColor" viewBox="0 0 20 20">
             <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
           </svg>
-          <div className="absolute bottom-full right-0 mb-2 hidden group-hover:block w-64 p-2 bg-gray-900 text-white text-xs rounded-lg shadow-lg z-10">
+          <div className="absolute bottom-full right-0 mb-2 hidden group-hover:block w-64 p-2 bg-gray-900 dark:bg-gray-900 light:bg-white text-white dark:text-white light:text-gray-900 text-xs rounded-lg shadow-lg border-0 dark:border-0 light:border light:border-gray-200 z-10">
             Set how long the rainfall event lasts. Longer durations allow more water accumulation. Short bursts (0.5-2 hrs) vs sustained storms (4-8 hrs) have different flood impacts.
           </div>
         </div>

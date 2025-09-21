@@ -139,6 +139,282 @@ html, body {
   100% { transform: rotate(360deg); }
 }
 
+/* Leaflet Zoom Control Customization */
+.leaflet-control-zoom {
+  position: absolute !important;
+  top: 5.5rem !important; /* Position below the top bar with extra spacing */
+  left: 12px !important;
+  z-index: 30 !important; /* Below header (z-60), above map (z-0) */
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.leaflet-control-zoom a {
+  background: #000 !important; /* Black background for dark mode */
+  border: 1.5px solid transparent !important;
+  background-image: linear-gradient(#000, #000), linear-gradient(to right, #1e90ff, #ffffff) !important;
+  background-origin: border-box !important;
+  background-clip: content-box, border-box !important;
+  border-radius: 0.5rem !important;
+  color: white !important; /* White text for dark mode */
+  font-size: 16px !important;
+  font-weight: bold !important;
+  width: 34px !important;
+  height: 34px !important;
+  line-height: 30px !important;
+  text-align: center !important;
+  text-decoration: none !important;
+  transition: all 0.2s ease !important;
+  margin-bottom: 4px !important; /* Increased spacing between buttons */
+  display: block !important;
+  font-family: 'Courier New', monospace !important;
+}
+
+/* Light mode zoom buttons */
+.light .leaflet-control-zoom a {
+  background: #fff !important; /* White background for light mode */
+  background-image: linear-gradient(#fff, #fff), linear-gradient(to right, #1e90ff, #ffffff) !important;
+  color: #000 !important; /* Black text for light mode */
+  border: 1.5px solid #1e90ff !important; /* Thin blue outline for light mode */
+}
+
+.leaflet-control-zoom a:hover {
+  background: #000 !important;
+  background-image: linear-gradient(#000, #000), linear-gradient(to right, #1e90ff, #ffffff) !important;
+  background-origin: border-box !important;
+  background-clip: content-box, border-box !important;
+  box-shadow: 0 0 12px rgba(30, 144, 255, 0.6), 0 0 20px rgba(255, 255, 255, 0.3) !important; /* Blue to white glow */
+  transform: scale(1.05) !important;
+}
+
+/* Light mode hover state */
+.light .leaflet-control-zoom a:hover {
+  background: #f5f5f5 !important; /* Light gray hover for light mode */
+  background-image: linear-gradient(#f5f5f5, #f5f5f5), linear-gradient(to right, #1e90ff, #ffffff) !important;
+  color: #000 !important;
+}
+
+.leaflet-control-zoom a:active {
+  background: #111 !important;
+  background-image: linear-gradient(#111, #111), linear-gradient(to right, #1e90ff, #ffffff) !important;
+  background-origin: border-box !important;
+  background-clip: content-box, border-box !important;
+  transform: scale(0.98) !important;
+  box-shadow: 0 0 8px rgba(30, 144, 255, 0.4), 0 0 15px rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Light mode active state */
+.light .leaflet-control-zoom a:active {
+  background: #e0e0e0 !important; /* Pressed gray for light mode */
+  background-image: linear-gradient(#e0e0e0, #e0e0e0), linear-gradient(to right, #1e90ff, #ffffff) !important;
+  color: #000 !important;
+}
+
+.leaflet-control-zoom a:focus {
+  outline: none !important;
+  box-shadow: 0 0 12px rgba(30, 144, 255, 0.6), 0 0 20px rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Ensure zoom controls work on mobile */
+@media (max-width: 768px) {
+  .leaflet-control-zoom {
+    top: 5.5rem !important;
+    left: 10px !important;
+  }
+  
+  .leaflet-control-zoom a {
+    width: 38px !important;
+    height: 38px !important;
+    line-height: 34px !important;
+    font-size: 18px !important;
+    margin-bottom: 6px !important; /* Extra spacing on mobile */
+  }
+}
+
+/* Advanced Gradient Button Styles */
+.gradient-border-button {
+  position: relative;
+  background: 
+    linear-gradient(#000000, #000000) padding-box,
+    linear-gradient(45deg, #3B82F6, #8B5CF6, #F59E0B, #EF4444, #3B82F6) border-box;
+  border: 2px solid transparent;
+  background-size: 100% 100%, 400% 400%;
+  animation: gradient-shift 3s ease infinite;
+}
+
+/* Light mode gradient button */
+.light .gradient-border-button {
+  background: 
+    linear-gradient(#ffffff, #ffffff) padding-box,
+    linear-gradient(45deg, #3B82F6, #8B5CF6, #F59E0B, #EF4444, #3B82F6) border-box;
+}
+
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%, 0% 50%; }
+  50% { background-position: 0% 50%, 100% 50%; }
+}
+
+/* Cursor glow effect */
+.cursor-glow {
+  position: absolute;
+  pointer-events: none;
+  border-radius: 50%;
+  filter: blur(20px);
+  transition: opacity 200ms ease;
+  background: radial-gradient(
+    circle,
+    rgba(59, 130, 246, 0.6) 0%,
+    rgba(139, 92, 246, 0.4) 30%,
+    rgba(245, 158, 11, 0.3) 60%,
+    transparent 100%
+  );
+  z-index: 1;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .gradient-border-button {
+    background-size: 100% 100%, 300% 300%;
+  }
+  
+  .cursor-glow {
+    filter: blur(15px);
+  }
+}
+
+@media (max-width: 480px) {
+  .gradient-border-button {
+    background-size: 100% 100%, 250% 250%;
+    animation-duration: 4s;
+  }
+  
+  .cursor-glow {
+    filter: blur(12px);
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .gradient-border-button {
+    background: linear-gradient(#000000, #000000) padding-box,
+                linear-gradient(45deg, #FFFFFF, #CCCCCC, #FFFFFF) border-box;
+  }
+  
+  .light .gradient-border-button {
+    background: linear-gradient(#ffffff, #ffffff) padding-box,
+                linear-gradient(45deg, #000000, #333333, #000000) border-box;
+  }
+}
+
+/* Enhanced Rainfall Slider Styles */
+.rainfall-slider {
+  transition: all 0.2s ease;
+}
+
+.rainfall-slider:hover [&::-webkit-slider-thumb] {
+  transform: scale(1.1);
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2);
+}
+
+.rainfall-gradient-fill {
+  position: relative;
+  overflow: hidden;
+}
+
+.rainfall-gradient-fill::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.3) 50%,
+    transparent 100%
+  );
+  animation: rainfall-shimmer 2s ease-in-out infinite;
+}
+
+@keyframes rainfall-shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* Flowing rain animation */
+.rainfall-flow-animation {
+  background: repeating-linear-gradient(
+    90deg,
+    transparent 0px,
+    rgba(255, 255, 255, 0.1) 1px,
+    rgba(255, 255, 255, 0.1) 2px,
+    transparent 3px,
+    transparent 8px
+  );
+  animation: rainfall-flow 3s linear infinite;
+}
+
+@keyframes rainfall-flow {
+  0% {
+    background-position: 0px 0px;
+  }
+  100% {
+    background-position: 20px 0px;
+  }
+}
+
+/* Subtle texture effect */
+.rainfall-texture {
+  background-image: 
+    radial-gradient(circle at 1px 1px, rgba(255,255,255,0.15) 1px, transparent 0);
+  background-size: 4px 4px;
+  background-position: 0 0, 2px 2px;
+}
+
+/* Enhanced thumb hover effects */
+.rainfall-slider:hover::-webkit-slider-thumb {
+  transform: scale(1.1);
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.3), 0 4px 12px rgba(0, 0, 0, 0.3);
+  border-color: #3B82F6;
+}
+
+.rainfall-slider:hover::-moz-range-thumb {
+  transform: scale(1.1);
+  box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.3), 0 4px 12px rgba(0, 0, 0, 0.3);
+  border-color: #3B82F6;
+}
+
+/* Active state */
+.rainfall-slider:active::-webkit-slider-thumb {
+  transform: scale(0.95);
+}
+
+.rainfall-slider:active::-moz-range-thumb {
+  transform: scale(0.95);
+}
+
+/* Responsive adjustments for rainfall slider */
+@media (max-width: 768px) {
+  .rainfall-slider::-webkit-slider-thumb {
+    height: 8px;
+    width: 8px;
+  }
+  
+  .rainfall-slider::-moz-range-thumb {
+    height: 8px;
+    width: 8px;
+  }
+  
+  .rainfall-flow-animation {
+    animation-duration: 4s;
+  }
+}
+
 /* Respect reduced motion */
 @media (prefers-reduced-motion: reduce) {
   .storm-dot--active,
@@ -149,5 +425,40 @@ html, body {
   
   .lightning-bolt path {
     animation: none;
+  }
+  
+  .leaflet-control-zoom a {
+    transition: none !important;
+  }
+  
+  .leaflet-control-zoom a:hover {
+    transform: none !important;
+  }
+  
+  .leaflet-control-zoom a:active {
+    transform: none !important;
+  }
+  
+  .gradient-border-button {
+    animation: none;
+    background-size: 100% 100%, 100% 100%;
+  }
+  
+  .cursor-glow {
+    transition: none;
+  }
+  
+  .rainfall-gradient-fill::before {
+    animation: none;
+  }
+  
+  .rainfall-flow-animation {
+    animation: none;
+  }
+  
+  .rainfall-slider:hover::-webkit-slider-thumb,
+  .rainfall-slider:hover::-moz-range-thumb {
+    transform: none;
+    transition: none;
   }
 }

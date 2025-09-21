@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts'
 import ThemeToggle from '../components/ThemeToggle'
+import { LocationProvider, useLocation } from '../contexts/LocationContext'
 import AIInsightFeed from '../components/AIInsightFeed'
 import CircularGauge from '../components/CircularGauge'
 
@@ -52,7 +53,7 @@ const STEPS = [
   { id: 5, name: 'Actions & Safety', description: 'Infrastructure planning and community safety' }
 ]
 
-function StormAnalysis() {
+function StormAnalysisContent() {
   const [formData, setFormData] = useState({
     latitude: '',
     longitude: '',
@@ -69,6 +70,7 @@ function StormAnalysis() {
   const [cityName, setCityName] = useState('')
   const svgRef = useRef(null)
   const pathRef = useRef(null)
+  const { currentLocation, isLoading: locationLoading } = useLocation()
 
   const roadTypes = [
     { value: 'residential street', label: 'Residential Street' },
@@ -200,7 +202,7 @@ function StormAnalysis() {
         if (stepId === 5) {
           // Actually call the API on step 5 (final step)
           console.log('📡 Calling flood analysis API...')
-          const response = await fetch('/api/flood-analysis/analyze', {
+          const response = await fetch('http://localhost:3001/api/flood-analysis/analyze', {
             method: 'POST',
             headers: { 
               'Content-Type': 'application/json',
@@ -269,7 +271,6 @@ function StormAnalysis() {
         <div className="flex items-center justify-between max-w-7xl mx-auto">
           <div>
             <h1 className="text-2xl font-light tracking-wide">
-              <span className="text-white">Fifth Ward </span>
               <span 
                 className="italic bg-gradient-to-r from-[#7dd3ff] via-[#60a5fa] to-[#93c5fd] bg-clip-text text-transparent"
                 style={{ fontFamily: 'Georgia, serif' }}
@@ -278,7 +279,21 @@ function StormAnalysis() {
               </span>
             </h1>
             <div className="text-sm text-gray-300 mt-1 flex items-center space-x-4">
-              <span>Houston, Texas - Lightning Flow Analysis</span>
+              <motion.span
+                key={currentLocation.fullName}
+                initial={{ opacity: 0.7 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.3 }}
+              >
+                {locationLoading ? (
+                  <span className="flex items-center">
+                    <div className="w-3 h-3 border border-gray-400 border-t-transparent rounded-full animate-spin mr-2"></div>
+                    Detecting location...
+                  </span>
+                ) : (
+                  `${currentLocation.fullName} - Lightning Flow Analysis`
+                )}
+              </motion.span>
               {formData.latitude && formData.longitude && (
                 <span className="text-[#7dd3ff]">
                   {parseFloat(formData.latitude).toFixed(4)}, {parseFloat(formData.longitude).toFixed(4)}
@@ -653,10 +668,10 @@ function Step1InputAcquisition({ formData, onInputChange, onSelectCoordinates, r
         <label className="block text-sm font-medium text-gray-300 mb-3">Quick Select Locations</label>
         <div className="flex flex-wrap gap-2">
           <button
-            onClick={() => onSelectCoordinates(29.715820777907464, -95.40178894546409, 'Fifth Ward, Houston')}
+            onClick={() => onSelectCoordinates(29.715820777907464, -95.40178894546409, 'Houston')}
             className="px-3 py-2 bg-white/10 hover:bg-[#7dd3ff]/20 border border-white/20 hover:border-[#7dd3ff]/50 rounded-lg text-sm text-gray-300 hover:text-[#7dd3ff] transition-all duration-300"
           >
-            ⚡ Fifth Ward Houston
+            ⚡ Houston
           </button>
           <button
             onClick={() => onSelectCoordinates(37.7749, -122.4194, 'San Francisco')}
@@ -1579,6 +1594,14 @@ function Step5FloodRisk({ results }) {
         </div>
       )}
     </div>
+  )
+}
+
+function StormAnalysis() {
+  return (
+    <LocationProvider>
+      <StormAnalysisContent />
+    </LocationProvider>
   )
 }
 
