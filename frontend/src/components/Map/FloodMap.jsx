@@ -31,15 +31,20 @@ const FloodMap = () => {
   const currentTileLayer = isDark ? darkTileLayer : lightTileLayer
 
   return (
-    <div className="h-full w-full min-h-0">
+    <div className="h-full w-full min-h-0 relative z-10" style={{ pointerEvents: 'auto' }}>
       <MapContainer
         center={fifthWardCenter}
         zoom={14}
-        maxBounds={fifthWardBounds}
-        maxBoundsViscosity={1.0}
         className="h-full w-full"
         zoomControl={true}
         scrollWheelZoom={true}
+        dragging={true}
+        doubleClickZoom={true}
+        touchZoom={true}
+        boxZoom={true}
+        keyboard={true}
+        preferCanvas={false}
+        worldCopyJump={false}
       >
         <TileLayer
           attribution={currentTileLayer.attribution}
